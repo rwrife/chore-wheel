@@ -1,0 +1,13 @@
+Chore Wheel keeps a household's recurring chores on your iPhone, without an account, a subscription, or a cloud server.
+
+Set up your household once: name the people who live with you, then list the chores that actually recur, with roughly how long each takes and how often it is due. Chore Wheel proposes the next assignment with a transparent rotation, so nobody has to play household manager or keep score in their head.
+
+Mark a chore done with one thumb from the today board. If a week does not work out, request a swap and the other person accepts or declines it on the same board — every change is recorded, so the record still makes sense later. A fairness view shows completed effort per person over a period you choose, and items that were never resolved stay unknown rather than quietly counted against someone.
+
+Everything stays on your device. There is no sign-up, no advertising, no analytics, and no location, camera, or contacts access. Back up the whole household to a portable JSON file, or produce a redacted board you can print or share, whenever you want. Reminders are local and off until you turn them on.
+
+Chore Wheel is built for adults sharing a home who want a clear, shared answer to "whose turn is it" without points, allowances, or leaderboard pressure.
+
+Chore Wheel is an iPhone app. It is a household coordination tool, not a medical, safety, or childcare service.
+
+This listing describes the planned app. Features arrive through the public development backlog; only capabilities present in the shipped build are available in your download.
