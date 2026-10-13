@@ -27,5 +27,6 @@ datasheets/
 *.sqlite-wal
 *.bak
 
-# Local gem/tool caches used by Tools helpers in Docker
+# Local build/tool caches used by SwiftPM and Docker helpers
+.cache/
 .cache-home/
