@@ -42,6 +42,20 @@ jobs:
           sdk=$(DEVELOPER_DIR="$pick" xcrun --sdk iphoneos --show-sdk-version)
           [[ "$sdk" == 26.0 ]] || { echo "Expected iPhoneOS SDK 26.0; got $sdk"; exit 1; }
 
+      - name: Ensure pinned iOS 26.0 simulator runtime exists
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          xcrun simctl list runtimes
+          if ! xcrun simctl list runtimes | grep -Fq 'com.apple.CoreSimulator.SimRuntime.iOS-26-0'; then
+            echo 'Pinned iOS 26.0 runtime absent; downloading exact Xcode platform.'
+            xcodebuild -downloadPlatform iOS -architectureVariant universal
+          fi
+          xcrun simctl list runtimes | grep -F 'com.apple.CoreSimulator.SimRuntime.iOS-26-0' || {
+            echo 'Exact iOS 26.0 runtime unavailable; cannot substitute a newer runtime.'
+            exit 1
+          }
+
       - name: Build for generic iOS Simulator
         run: |
           set -euo pipefail
