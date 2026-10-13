@@ -46,3 +46,14 @@ and its result must be read from the PR's Checks tab.
 - No iOS compilation, simulator boot, `UIDeviceFamily` inspection, archive,
   or TestFlight upload. Those run only in the macOS CI job of this PR.
 - No app icon (`AppStore/icon.png` intentionally absent; issue #8 owns it).
+
+## Apple CI evidence (PR #9, merged as squash)
+
+- Failed run 38354875079: `actool` error `No simulator runtime version ... available to use with iphonesimulator SDK version 23A339` — hosted macos-26 image lacked the iOS 26.0 simulator runtime for pinned Xcode 26.0.1. Repaired in-workflow by `xcodebuild -downloadPlatform iOS -architectureVariant universal` with an exact-runtime assertion (no toolchain substitution).
+- Passing run 38355915283 (head 5080f0e): https://github.com/rwrife/chore-wheel/actions/runs/38355915283
+  - Select exact Xcode 26.0.1 (17A400) + iPhoneOS SDK 26.0: success
+  - Ensure pinned iOS 26.0 simulator runtime: success
+  - Build for generic iOS Simulator: success
+  - Assert built `UIDeviceFamily = [1]` and bundle id `com.infinityball.chorewheel`: success
+  - Run unit tests (iPhone 17 simulator): success
+  - Structure & toolchain contract (Linux): success
