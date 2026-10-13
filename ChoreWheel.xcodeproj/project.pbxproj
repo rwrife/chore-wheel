@@ -1,0 +1,451 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		08C008B0A459284547E0B96B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26889065EDA5A20A333EBF64 /* ContentView.swift */; };
+		08CCDA771B89C91AF7FA1719 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C309B6C095C3DC757D60566B /* Foundation.framework */; };
+		2B4FDA12CE55E43E859BEB0E /* Scaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B44343C3E794E477DC390B /* Scaffold.swift */; };
+		482A10715B45960F21E6D25C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33333E6EDA1AC0E7A73DB377 /* Assets.xcassets */; };
+		60F8AFE41CE3F824E4932DF9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C309B6C095C3DC757D60566B /* Foundation.framework */; };
+		7DE1FF5A2E855103CAC8F663 /* ChoreWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E41D28F50A3A0AFF774512 /* ChoreWheelApp.swift */; };
+		DE0EDFF533D8902C4BCBCD2D /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0746945BB1F99A62AA2FFE7 /* ScaffoldTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		761BF3B62C95B9B226996E01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 11E86FFA1EBA7DD71238F7E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C5B97F4F9164E6B854E55E01;
+			remoteInfo = ChoreWheel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00E41D28F50A3A0AFF774512 /* ChoreWheelApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelApp.swift; path = Sources/ChoreWheel/App/ChoreWheelApp.swift; sourceTree = "<group>"; };
+		26889065EDA5A20A333EBF64 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = Sources/ChoreWheel/App/ContentView.swift; sourceTree = "<group>"; };
+		33333E6EDA1AC0E7A73DB377 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		59B44343C3E794E477DC390B /* Scaffold.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Scaffold.swift; path = Sources/ChoreWheel/Domain/Scaffold.swift; sourceTree = "<group>"; };
+		C309B6C095C3DC757D60566B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		DAECE3E3FD70BF160429C5F6 /* ChoreWheel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChoreWheel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0746945BB1F99A62AA2FFE7 /* ScaffoldTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ScaffoldTests.swift; path = Tests/ChoreWheelTests/ScaffoldTests.swift; sourceTree = "<group>"; };
+		FA6C1095CB0DF6417C803C93 /* ChoreWheelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChoreWheelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5719DB6AFC96FBC6912AD523 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60F8AFE41CE3F824E4932DF9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E14D1744EBEAA990FD3DD081 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08CCDA771B89C91AF7FA1719 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05E1F6BCC02F9EAADBBB7C08 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				232C795E05F32213F64ADA3E /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		232C795E05F32213F64ADA3E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				C309B6C095C3DC757D60566B /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		9137B8F9FF6A501BC0F9FE32 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAECE3E3FD70BF160429C5F6 /* ChoreWheel.app */,
+				FA6C1095CB0DF6417C803C93 /* ChoreWheelTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9576703998AF9A5277856ACB = {
+			isa = PBXGroup;
+			children = (
+				9137B8F9FF6A501BC0F9FE32 /* Products */,
+				05E1F6BCC02F9EAADBBB7C08 /* Frameworks */,
+				00E41D28F50A3A0AFF774512 /* ChoreWheelApp.swift */,
+				26889065EDA5A20A333EBF64 /* ContentView.swift */,
+				59B44343C3E794E477DC390B /* Scaffold.swift */,
+				33333E6EDA1AC0E7A73DB377 /* Assets.xcassets */,
+				E0746945BB1F99A62AA2FFE7 /* ScaffoldTests.swift */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C5B97F4F9164E6B854E55E01 /* ChoreWheel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD1C9524360E56835DB48E17 /* Build configuration list for PBXNativeTarget "ChoreWheel" */;
+			buildPhases = (
+				18DEFC0A6BE483973350F973 /* Sources */,
+				5719DB6AFC96FBC6912AD523 /* Frameworks */,
+				C7FF209CA0522F2BBF460F5A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ChoreWheel;
+			productName = ChoreWheel;
+			productReference = DAECE3E3FD70BF160429C5F6 /* ChoreWheel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E3E7270E03CA7125DACB8BFB /* ChoreWheelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4972BDD10FC64A024725AC38 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */;
+			buildPhases = (
+				41C11A8CD3549BBE5CDA7543 /* Sources */,
+				E14D1744EBEAA990FD3DD081 /* Frameworks */,
+				CF58C4BA2895A810E0480DC5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A8E3E3A15496DB2171EC64E /* PBXTargetDependency */,
+			);
+			name = ChoreWheelTests;
+			productName = ChoreWheelTests;
+			productReference = FA6C1095CB0DF6417C803C93 /* ChoreWheelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11E86FFA1EBA7DD71238F7E4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 5E48088DABD4FDFD73A5138D /* Build configuration list for PBXProject "ChoreWheel" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9576703998AF9A5277856ACB;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 100;
+			productRefGroup = 9137B8F9FF6A501BC0F9FE32 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C5B97F4F9164E6B854E55E01 /* ChoreWheel */,
+				E3E7270E03CA7125DACB8BFB /* ChoreWheelTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C7FF209CA0522F2BBF460F5A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				482A10715B45960F21E6D25C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF58C4BA2895A810E0480DC5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		18DEFC0A6BE483973350F973 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DE1FF5A2E855103CAC8F663 /* ChoreWheelApp.swift in Sources */,
+				08C008B0A459284547E0B96B /* ContentView.swift in Sources */,
+				2B4FDA12CE55E43E859BEB0E /* Scaffold.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C11A8CD3549BBE5CDA7543 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE0EDFF533D8902C4BCBCD2D /* ScaffoldTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5A8E3E3A15496DB2171EC64E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ChoreWheel;
+			target = C5B97F4F9164E6B854E55E01 /* ChoreWheel */;
+			targetProxy = 761BF3B62C95B9B226996E01 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		45626FB9A1694B31C5D8FC31 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel;
+				PRODUCT_NAME = ChoreWheel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		50C562582EF5DB79AA535583 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChoreWheel.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ChoreWheel";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7BCD9B662B6FB5D9999FEB8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel;
+				PRODUCT_NAME = ChoreWheel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		92EF131B115E736F1F186158 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChoreWheel.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ChoreWheel";
+			};
+			name = Debug;
+		};
+		C939A9AFFC7DFBB326690E65 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		E1995C084BF1AFC73E39EA3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4972BDD10FC64A024725AC38 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50C562582EF5DB79AA535583 /* Release */,
+				92EF131B115E736F1F186158 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E48088DABD4FDFD73A5138D /* Build configuration list for PBXProject "ChoreWheel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C939A9AFFC7DFBB326690E65 /* Debug */,
+				E1995C084BF1AFC73E39EA3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FD1C9524360E56835DB48E17 /* Build configuration list for PBXNativeTarget "ChoreWheel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				45626FB9A1694B31C5D8FC31 /* Release */,
+				7BCD9B662B6FB5D9999FEB8B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 11E86FFA1EBA7DD71238F7E4 /* Project object */;
+}

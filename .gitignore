@@ -26,3 +26,7 @@ datasheets/
 *.sqlite-shm
 *.sqlite-wal
 *.bak
+
+# Local build/tool caches used by SwiftPM and Docker helpers
+.cache/
+.cache-home/

@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  structure:
+    name: Structure & toolchain contract (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run structural gates
+        run: python3 Tools/Checks/check_structure.py
+
+  build-test:
+    name: Build & test (iOS 26 SDK)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select exact Xcode 26.0.1 (17A400) and iOS 26.0 SDK
+        run: |
+          set -euo pipefail
+          pick=''
+          for candidate in /Applications/Xcode*.app/Contents/Developer; do
+            [[ -d "$candidate" ]] || continue
+            version=$(DEVELOPER_DIR="$candidate" xcodebuild -version)
+            if [[ "$version" == $'Xcode 26.0.1\nBuild version 17A400' ]]; then
+              pick="$candidate"
+              break
+            fi
+          done
+          [[ -n "$pick" ]] || { echo 'Exact Xcode 26.0.1 (17A400) unavailable'; exit 1; }
+          echo "DEVELOPER_DIR=$pick" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$pick" xcodebuild -version
+          sdk=$(DEVELOPER_DIR="$pick" xcrun --sdk iphoneos --show-sdk-version)
+          [[ "$sdk" == 26.0 ]] || { echo "Expected iPhoneOS SDK 26.0; got $sdk"; exit 1; }
+
+      - name: Ensure pinned iOS 26.0 simulator runtime exists
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          xcrun simctl list runtimes
+          if ! xcrun simctl list runtimes | grep -Fq 'com.apple.CoreSimulator.SimRuntime.iOS-26-0'; then
+            echo 'Pinned iOS 26.0 runtime absent; downloading exact Xcode platform.'
+            xcodebuild -downloadPlatform iOS -architectureVariant universal
+          fi
+          xcrun simctl list runtimes | grep -F 'com.apple.CoreSimulator.SimRuntime.iOS-26-0' || {
+            echo 'Exact iOS 26.0 runtime unavailable; cannot substitute a newer runtime.'
+            exit 1
+          }
+
+      - name: Build for generic iOS Simulator
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -project ChoreWheel.xcodeproj \
+            -scheme ChoreWheel \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            -derivedDataPath "$RUNNER_TEMP/ChoreWheelDerivedData" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Assert iPhone-only device family in built app
+        run: |
+          set -euo pipefail
+          info="$RUNNER_TEMP/ChoreWheelDerivedData/Build/Products/Debug-iphonesimulator/ChoreWheel.app/Info.plist"
+          [[ -f "$info" ]] || { echo 'Built app Info.plist missing'; exit 1; }
+          python3 - "$info" <<'PY'
+          import plistlib, sys
+          with open(sys.argv[1], 'rb') as f:
+              info = plistlib.load(f)
+          assert info.get('UIDeviceFamily') == [1], info.get('UIDeviceFamily')
+          assert info.get('CFBundleIdentifier') == 'com.infinityball.chorewheel', info.get('CFBundleIdentifier')
+          print('OK: built UIDeviceFamily = [1] and bundle id pinned.')
+          PY
+
+      - name: Run unit tests (iPhone 17 simulator)
+        run: |
+          set -euo pipefail
+          xcodebuild test \
+            -project ChoreWheel.xcodeproj \
+            -scheme ChoreWheel \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -resultBundlePath "$RUNNER_TEMP/ChoreWheelTests.xcresult" \
+            -derivedDataPath "$RUNNER_TEMP/ChoreWheelDerivedData" \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO
+            
+      - name: Upload test result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chorewheel-test-results
+          path: ${{ runner.temp }}/ChoreWheelTests.xcresult
+          if-no-files-found: warn
+          retention-days: 7
