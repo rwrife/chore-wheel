@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C5B97F4F9164E6B854E55E01"
+               BlueprintIdentifier = "E6E63A79C51AF948220CBD97"
                BuildableName = "ChoreWheel.app"
                BlueprintName = "ChoreWheel"
                ReferencedContainer = "container:ChoreWheel.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C5B97F4F9164E6B854E55E01"
+            BlueprintIdentifier = "E6E63A79C51AF948220CBD97"
             BuildableName = "ChoreWheel.app"
             BlueprintName = "ChoreWheel"
             ReferencedContainer = "container:ChoreWheel.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E3E7270E03CA7125DACB8BFB"
+               BlueprintIdentifier = "9534D16EBCF561AC44B7B6C2"
                BuildableName = "ChoreWheelTests.xctest"
                BlueprintName = "ChoreWheelTests"
                ReferencedContainer = "container:ChoreWheel.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C5B97F4F9164E6B854E55E01"
+            BlueprintIdentifier = "E6E63A79C51AF948220CBD97"
             BuildableName = "ChoreWheel.app"
             BlueprintName = "ChoreWheel"
             ReferencedContainer = "container:ChoreWheel.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C5B97F4F9164E6B854E55E01"
+            BlueprintIdentifier = "E6E63A79C51AF948220CBD97"
             BuildableName = "ChoreWheel.app"
             BlueprintName = "ChoreWheel"
             ReferencedContainer = "container:ChoreWheel.xcodeproj">
