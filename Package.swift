@@ -9,14 +9,16 @@ let package = Package(
         .library(name: "ChoreWheelCore", targets: ["ChoreWheelCore"]),
     ],
     targets: [
+        .systemLibrary(name: "CSQLite", pkgConfig: "sqlite3"),
         .target(
             name: "ChoreWheelCore",
+            dependencies: ["CSQLite"],
             path: "Sources/ChoreWheel",
             exclude: ["App"]
         ),
         .testTarget(
             name: "ChoreWheelTests",
-            dependencies: ["ChoreWheelCore"],
+            dependencies: ["ChoreWheelCore", "CSQLite"],
             path: "Tests/ChoreWheelTests"
         ),
     ]

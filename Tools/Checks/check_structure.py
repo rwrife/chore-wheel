@@ -113,6 +113,12 @@ else:
         fail("pbxproj: macOS platform SDK referenced; app is iPhone/iOS only")
     if 'sdkroot = macosx' in text.lower():
         fail("pbxproj: macOS sdkroot found; app is iOS only")
+    # Every app/domain/test Swift file must be wired into the hand-maintained
+    # pbxproj; a file that exists only in Package.swift silently skips Apple CI.
+    for prefix in ("Sources/ChoreWheel/App/", "Sources/ChoreWheel/Domain/", "Tests/ChoreWheelTests/"):
+        for swift in sorted((ROOT / prefix).glob("*.swift")):
+            if swift.name not in text:
+                fail(f"pbxproj: {prefix}{swift.name} is not referenced in the Xcode project")
 
 # --- 5. .gitignore hygiene -----------------------------------------------------
 gitignore = (ROOT / ".gitignore").read_text()
