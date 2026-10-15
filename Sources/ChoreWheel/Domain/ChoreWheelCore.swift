@@ -169,8 +169,8 @@ public enum LedgerError: Error, Equatable {
 
 /// Append-only event log. Board state is always a pure fold over `events`,
 /// so replays are bit-for-bit reproducible across restarts and platforms.
-// ponytail: in-memory pure fold over events. SQLite persistence + migrations
-// arrive in issue #3; this ledger is ready to back the durable store.
+// ponytail: pure fold stays in memory; ChoreStore persists/replays events locally.
+// If history grows large, cache a verified checkpoint rather than rewriting events.
 public struct ChoreLedger: Sendable, Equatable {
     public private(set) var events: [ChoreEvent] = []
 
