@@ -84,6 +84,7 @@ public enum ChoreEventPayload: Codable, Sendable, Equatable {
     case choreUpdated(Chore)
     case assigned(choreID: UUID, memberID: UUID, on: ChoreDay)
     case completed(choreID: UUID, memberID: UUID, on: ChoreDay)
+    case completionUndone(completionEventID: UUID)
     case missed(choreID: UUID, memberID: UUID, on: ChoreDay)
     case swapRequested(choreID: UUID, fromMemberID: UUID, toMemberID: UUID)
     case swapAccepted(requestEventID: UUID, byMemberID: UUID, on: ChoreDay)
@@ -130,6 +131,11 @@ public struct Assignment: Codable, Sendable, Equatable {
     }
 }
 
+public struct UndoableCompletion: Codable, Sendable, Equatable {
+    public let assignment: Assignment
+    public let completedAt: Date
+}
+
 public struct PendingSwap: Codable, Sendable, Equatable {
     public let requestEventID: UUID
     public let choreID: UUID
@@ -146,6 +152,8 @@ public struct BoardState: Codable, Sendable, Equatable {
     public var chores: [UUID: Chore] = [:]
     public var openAssignments: [UUID: Assignment] = [:]
     public var pendingSwaps: [UUID: PendingSwap] = [:]
+    /// Latest completion eligible for undo; cleared when a new assignment begins.
+    public var undoableCompletions: [UUID: UndoableCompletion] = [:]
     public var fairness: [UUID: FairnessSummary] = [:]
 
     public init() {}
@@ -163,6 +171,10 @@ public enum LedgerError: Error, Equatable {
     case swapAlreadyPending(choreID: UUID)
     case unknownSwapRequest(UUID)
     case wrongSwapRecipient(UUID)
+    case undoUnavailable(UUID)
+    case undoExpired(UUID)
+    case invalidEventTimestamp
+    case undoAlreadyPending(UUID)
 }
 
 // MARK: - Ledger
@@ -237,6 +249,7 @@ public struct ChoreLedger: Sendable, Equatable {
             guard s.openAssignments[choreID] == nil else { throw LedgerError.alreadyAssigned(choreID) }
             s.openAssignments[choreID] = Assignment(choreID: choreID, memberID: memberID, assignedOn: date,
                                                     effortMinutes: s.chores[choreID]?.effortMinutes ?? 0)
+            s.undoableCompletions = s.undoableCompletions.filter { $0.value.assignment.choreID != choreID }
             s.pendingSwaps = s.pendingSwaps.filter { $0.value.choreID != choreID }
             var summary = s.fairness[memberID] ?? FairnessSummary()
             summary.lastAssignedOn = date
@@ -247,11 +260,26 @@ public struct ChoreLedger: Sendable, Equatable {
                 throw LedgerError.memberNotEligible(choreID: choreID, memberID: memberID)
             }
             s.openAssignments[choreID] = nil
+            s.undoableCompletions = s.undoableCompletions.filter { $0.value.assignment.choreID != choreID }
+            s.undoableCompletions[event.id] = UndoableCompletion(assignment: open, completedAt: event.timestamp)
             s.pendingSwaps = s.pendingSwaps.filter { $0.value.choreID != choreID }
             var summary = s.fairness[memberID] ?? FairnessSummary()
             summary.completedCount += 1
             summary.completedEffortMinutes += open.effortMinutes
             s.fairness[memberID] = summary
+        case .completionUndone(let completionID):
+            guard let undo = s.undoableCompletions[completionID] else { throw LedgerError.undoUnavailable(completionID) }
+            let elapsed = event.timestamp.timeIntervalSince(undo.completedAt)
+            guard elapsed.isFinite, elapsed >= 0 else { throw LedgerError.invalidEventTimestamp }
+            guard elapsed <= 5 else { throw LedgerError.undoExpired(completionID) }
+            let open = undo.assignment
+            guard s.openAssignments[open.choreID] == nil else { throw LedgerError.undoAlreadyPending(open.choreID) }
+            s.openAssignments[open.choreID] = open
+            s.undoableCompletions[completionID] = nil
+            var summary = s.fairness[open.memberID] ?? FairnessSummary()
+            summary.completedCount -= 1
+            summary.completedEffortMinutes -= open.effortMinutes
+            s.fairness[open.memberID] = summary
         case .missed(let choreID, let memberID, _):
             guard let open = s.openAssignments[choreID] else { throw LedgerError.unknownChore(choreID) }
             guard open.memberID == memberID else {

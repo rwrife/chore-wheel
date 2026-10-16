@@ -218,6 +218,44 @@ struct DomainTests {
         }
     }
 
+    @Test("completion undo restores frozen assignment and fairness within five seconds")
+    func undoCompletion() throws {
+        var ledger = try seed()
+        try ledger.append(.assigned(choreID: dishes, memberID: ana, on: day(1)))
+        let completion = ChoreEvent(id: UUID(), timestamp: Date(timeIntervalSince1970: 100),
+                                    payload: .completed(choreID: dishes, memberID: ana, on: day(1)))
+        try ledger.append(completion)
+        let undo = ChoreEvent(timestamp: Date(timeIntervalSince1970: 103),
+                              payload: .completionUndone(completionEventID: completion.id))
+        try ledger.append(undo)
+        let state = ledger.boardState()
+        #expect(state.openAssignments[dishes]?.memberID == ana)
+        #expect(state.openAssignments[dishes]?.effortMinutes == 10)
+        #expect(state.fairness[ana]?.completedCount == 0)
+        #expect(state.fairness[ana]?.completedEffortMinutes == 0)
+        #expect(try ChoreLedger(events: ledger.events).boardState() == state)
+        #expect(throws: LedgerError.undoUnavailable(completion.id)) {
+            try ledger.append(ChoreEvent(timestamp: Date(timeIntervalSince1970: 104),
+                payload: .completionUndone(completionEventID: completion.id)))
+        }
+    }
+
+    @Test("undo rejects expiry and cannot alter completed history on failure")
+    func undoExpiry() throws {
+        var ledger = try seed()
+        try ledger.append(.assigned(choreID: dishes, memberID: ana, on: day(1)))
+        let completion = ChoreEvent(id: UUID(), timestamp: Date(timeIntervalSince1970: 100),
+                                    payload: .completed(choreID: dishes, memberID: ana, on: day(1)))
+        try ledger.append(completion)
+        let count = ledger.events.count
+        #expect(throws: LedgerError.undoExpired(completion.id)) {
+            try ledger.append(ChoreEvent(timestamp: Date(timeIntervalSince1970: 106),
+                payload: .completionUndone(completionEventID: completion.id)))
+        }
+        #expect(ledger.events.count == count)
+        #expect(ledger.boardState().fairness[ana]?.completedCount == 1)
+    }
+
     @Test("same event stream replays to the same rotation winner")
     func stableReplay() throws {
         var ledger = try seed()

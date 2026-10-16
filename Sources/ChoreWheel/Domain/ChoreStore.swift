@@ -92,6 +92,8 @@ public final class ChoreStore {
                 case .choreAdded(let chore), .choreUpdated(let chore): expectedID = chore.id
                 case .assigned(let id, _, _), .completed(let id, _, _), .missed(let id, _, _),
                      .swapRequested(let id, _, _): expectedID = id
+                case .completionUndone(let id):
+                    expectedID = rows.first(where: { $0.event.id == id })?.choreID
                 case .swapAccepted(let id, _, _), .swapDeclined(let id, _):
                     expectedID = openSwapChores[id]
                 default: expectedID = nil
@@ -140,6 +142,7 @@ public final class ChoreStore {
         case .choreAdded(let chore), .choreUpdated(let chore): choreID = chore.id
         case .assigned(let id, _, _), .completed(let id, _, _), .missed(let id, _, _),
              .swapRequested(let id, _, _): choreID = id
+        case .completionUndone(let id): choreID = state.undoableCompletions[id]?.assignment.choreID
         case .swapAccepted(let requestID, _, _), .swapDeclined(let requestID, _):
             choreID = state.pendingSwaps[requestID]?.choreID
         default: choreID = nil
