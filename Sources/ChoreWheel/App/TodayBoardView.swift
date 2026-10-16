@@ -99,7 +99,7 @@ public struct UndoNotice: Equatable {
     public let assigneeName: String
 }
 
-public protocol FeedbackGenerator {
+@MainActor public protocol FeedbackGenerator {
     func triggerSuccess()
 }
 
@@ -114,14 +114,14 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
     }
 }
 
-public final class TodayBoardModel: ObservableObject {
+@MainActor public final class TodayBoardModel: ObservableObject {
     @Published public private(set) var dueTodayOrOverdue: [ChoreItemDisplay] = []
     @Published public private(set) var undoNotice: UndoNotice?
 
     private let store: ChoreStore
     private var currentDay: ChoreDay
     private let hapticGenerator: FeedbackGenerator
-    private var undoTimer: Timer?
+    private var undoTask: Task<Void, Never>?
 
     public init(store: ChoreStore, currentDay: ChoreDay, hapticGenerator: FeedbackGenerator = DefaultHapticGenerator()) {
         self.store = store
@@ -162,9 +162,10 @@ public final class TodayBoardModel: ObservableObject {
                 assigneeName: item.assigneeName
             )
             refresh()
-            undoTimer?.invalidate()
-            undoTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
-                self?.undoNotice = nil
+            undoTask?.cancel()
+            undoTask = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(5))
+                if !Task.isCancelled { self?.undoNotice = nil }
             }
         } catch {
             // Error handling: store error rejection
@@ -180,7 +181,7 @@ public final class TodayBoardModel: ObservableObject {
         do {
             try store.append(undoEvent)
             undoNotice = nil
-            undoTimer?.invalidate()
+            undoTask?.cancel()
             refresh()
         } catch {
             // If expired or failed
@@ -273,10 +274,7 @@ public struct UndoBannerView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(
-            Color(.tertiarySystemBackground)
-                .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 2),
-            in: RoundedRectangle(cornerRadius: 10)
-        )
+        .background(Color(.tertiarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 2)
     }
 }
