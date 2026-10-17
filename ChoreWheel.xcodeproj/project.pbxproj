@@ -7,131 +7,122 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A16AAE7F0F9A5496E37606C /* ChoreWheelCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E282FB9A88C47B070F5E60D2 /* ChoreWheelCore.swift */; };
-		0E0C44456CD1107454C583D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028ED9A385A97CB7A70A6C38 /* ContentView.swift */; };
-		14A2A74D99A6854D1090931B /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0AB6665A5BF50F74D92B71 /* StoreTests.swift */; };
-		15C15C14DF61317DAC371888 /* ChoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6109E32E791A95AE1569B992 /* ChoreStore.swift */; };
-		7E932428EED36FB8C36582D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 943BA0E0142A1DAE0DAFC44F /* Assets.xcassets */; };
-		92FA5FB660420E8D48144AC7 /* DomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA06968E73974EFAF154157 /* DomainTests.swift */; };
-		AF6AEF1AD7BAE33ED924FD41 /* TodayBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2EFEFDA4E1A412E3907F96B /* TodayBoardView.swift */; };
-		C6CBFFDD79C708355046BE08 /* ChoreWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC13C793BCBDB2783F599AAE /* ChoreWheelApp.swift */; };
-		FBDA451C0605EAF266AA019E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94A21028DD1DDE59C67C3F31 /* Foundation.framework */; };
-		FE74A070E667BA7175C1622B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94A21028DD1DDE59C67C3F31 /* Foundation.framework */; };
+		0CC744ECD3A0884C388BAF84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29F89E9618753E139167EC84 /* Foundation.framework */; };
+		37FECEB329AF1E3130115E64 /* ChoreWheelCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFAD9362F4296C02CE1B5AD /* ChoreWheelCore.swift */; };
+		63C89DD56CDA17FA6487C469 /* ChoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F7216A4E6349F0022596AA /* ChoreStore.swift */; };
+		73B0776BDFB4DF7C1352EF95 /* DomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676836B437FC20D5E6ADE51A /* DomainTests.swift */; };
+		766B190276F5E15CF32B3D94 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7684F7F6D9D771F2B3AC6314 /* ContentView.swift */; };
+		7C4616FE13EE05D11765E886 /* TodayBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB301698B45AE118CF5DF14 /* TodayBoardView.swift */; };
+		8439EBCA76F57F7341540BB9 /* ManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A9859AABA05ECE575C223C /* ManagementView.swift */; };
+		868E215DF404659A080BB581 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29F89E9618753E139167EC84 /* Foundation.framework */; };
+		88323CD86D021CCCE65C042E /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCADFEB56F5E41B7C6571390 /* StoreTests.swift */; };
+		8F9EEA9FCC51171DC313C082 /* EditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDB04235DA34FBE8D299973 /* EditorTests.swift */; };
+		B086A9CACEBAE24930968FBA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 120B73F54A4CF310F9B7DE84 /* Assets.xcassets */; };
+		D8021667D0468B9569511286 /* ChoreWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F88830AB5DFE4D2B2FB5187 /* ChoreWheelApp.swift */; };
+		EBB7945946BFE2687B4562E4 /* BoardEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D0400F238481F107B57C23 /* BoardEditor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A51DA753E76527E5806591B4 /* PBXContainerItemProxy */ = {
+		46F8848A5673B506625F92EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = C8630F59DF7BD1DFD464BA0D /* Project object */;
+			containerPortal = 310C59098AFF96F8390A64F6 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F2C0195CCE52D1B6C199AF11;
+			remoteGlobalIDString = 6359A91329F1ACC273A97E3B;
 			remoteInfo = ChoreWheel;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		028ED9A385A97CB7A70A6C38 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = Sources/ChoreWheel/App/ContentView.swift; sourceTree = "<group>"; };
-		0EFA99FB6257040A8A5AA874 /* ChoreWheelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChoreWheelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E0AB6665A5BF50F74D92B71 /* StoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StoreTests.swift; path = Tests/ChoreWheelTests/StoreTests.swift; sourceTree = "<group>"; };
-		5CA06968E73974EFAF154157 /* DomainTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DomainTests.swift; path = Tests/ChoreWheelTests/DomainTests.swift; sourceTree = "<group>"; };
-		6109E32E791A95AE1569B992 /* ChoreStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreStore.swift; path = Sources/ChoreWheel/Domain/ChoreStore.swift; sourceTree = "<group>"; };
-		63CB12098644CEF52E015D1D /* ChoreWheel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChoreWheel.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		943BA0E0142A1DAE0DAFC44F /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
-		94A21028DD1DDE59C67C3F31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		C2EFEFDA4E1A412E3907F96B /* TodayBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TodayBoardView.swift; path = Sources/ChoreWheel/App/TodayBoardView.swift; sourceTree = "<group>"; };
-		CC13C793BCBDB2783F599AAE /* ChoreWheelApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelApp.swift; path = Sources/ChoreWheel/App/ChoreWheelApp.swift; sourceTree = "<group>"; };
-		E282FB9A88C47B070F5E60D2 /* ChoreWheelCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelCore.swift; path = Sources/ChoreWheel/Domain/ChoreWheelCore.swift; sourceTree = "<group>"; };
+		0F88830AB5DFE4D2B2FB5187 /* ChoreWheelApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelApp.swift; path = Sources/ChoreWheel/App/ChoreWheelApp.swift; sourceTree = "<group>"; };
+		120B73F54A4CF310F9B7DE84 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		12CC7D7530981AC7A4529B86 /* ChoreWheelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChoreWheelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		16E7A96E1C16A8AB0D592200 /* ChoreWheel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChoreWheel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		29F89E9618753E139167EC84 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		676836B437FC20D5E6ADE51A /* DomainTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DomainTests.swift; path = Tests/ChoreWheelTests/DomainTests.swift; sourceTree = "<group>"; };
+		75A9859AABA05ECE575C223C /* ManagementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ManagementView.swift; path = Sources/ChoreWheel/App/ManagementView.swift; sourceTree = "<group>"; };
+		7684F7F6D9D771F2B3AC6314 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = Sources/ChoreWheel/App/ContentView.swift; sourceTree = "<group>"; };
+		8FDB04235DA34FBE8D299973 /* EditorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EditorTests.swift; path = Tests/ChoreWheelTests/EditorTests.swift; sourceTree = "<group>"; };
+		A8F7216A4E6349F0022596AA /* ChoreStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreStore.swift; path = Sources/ChoreWheel/Domain/ChoreStore.swift; sourceTree = "<group>"; };
+		BCADFEB56F5E41B7C6571390 /* StoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StoreTests.swift; path = Tests/ChoreWheelTests/StoreTests.swift; sourceTree = "<group>"; };
+		DCB301698B45AE118CF5DF14 /* TodayBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TodayBoardView.swift; path = Sources/ChoreWheel/App/TodayBoardView.swift; sourceTree = "<group>"; };
+		E9D0400F238481F107B57C23 /* BoardEditor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardEditor.swift; path = Sources/ChoreWheel/Domain/BoardEditor.swift; sourceTree = "<group>"; };
+		EAFAD9362F4296C02CE1B5AD /* ChoreWheelCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelCore.swift; path = Sources/ChoreWheel/Domain/ChoreWheelCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		760DA0D536BAA9F8C383DFC8 /* Frameworks */ = {
+		E35835D93DA9C0F44264D234 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE74A070E667BA7175C1622B /* Foundation.framework in Frameworks */,
+				0CC744ECD3A0884C388BAF84 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DB8FD6D8E2D4ACB71EC7F903 /* Frameworks */ = {
+		FCC58C5185D04E2F44D0279A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBDA451C0605EAF266AA019E /* Foundation.framework in Frameworks */,
+				868E215DF404659A080BB581 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		386567185D6CCB6ED02211F0 /* Products */ = {
+		055898C6328998CF27C97067 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63CB12098644CEF52E015D1D /* ChoreWheel.app */,
-				0EFA99FB6257040A8A5AA874 /* ChoreWheelTests.xctest */,
+				16E7A96E1C16A8AB0D592200 /* ChoreWheel.app */,
+				12CC7D7530981AC7A4529B86 /* ChoreWheelTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3FD78C6F002AE13E75E9C14D /* Frameworks */ = {
+		54747D4B2160F01245E4C9C6 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				770740DA417BF1085B3C12AC /* iOS */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		770740DA417BF1085B3C12AC /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				94A21028DD1DDE59C67C3F31 /* Foundation.framework */,
+				29F89E9618753E139167EC84 /* Foundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		EAA7F36AFBD883220487271A = {
+		84195C6F52FAAD6A2003F4A2 = {
 			isa = PBXGroup;
 			children = (
-				386567185D6CCB6ED02211F0 /* Products */,
-				3FD78C6F002AE13E75E9C14D /* Frameworks */,
-				CC13C793BCBDB2783F599AAE /* ChoreWheelApp.swift */,
-				028ED9A385A97CB7A70A6C38 /* ContentView.swift */,
-				C2EFEFDA4E1A412E3907F96B /* TodayBoardView.swift */,
-				6109E32E791A95AE1569B992 /* ChoreStore.swift */,
-				E282FB9A88C47B070F5E60D2 /* ChoreWheelCore.swift */,
-				943BA0E0142A1DAE0DAFC44F /* Assets.xcassets */,
-				5CA06968E73974EFAF154157 /* DomainTests.swift */,
-				3E0AB6665A5BF50F74D92B71 /* StoreTests.swift */,
+				055898C6328998CF27C97067 /* Products */,
+				9AE48328F7CFC01C1DC60783 /* Frameworks */,
+				0F88830AB5DFE4D2B2FB5187 /* ChoreWheelApp.swift */,
+				7684F7F6D9D771F2B3AC6314 /* ContentView.swift */,
+				75A9859AABA05ECE575C223C /* ManagementView.swift */,
+				DCB301698B45AE118CF5DF14 /* TodayBoardView.swift */,
+				E9D0400F238481F107B57C23 /* BoardEditor.swift */,
+				A8F7216A4E6349F0022596AA /* ChoreStore.swift */,
+				EAFAD9362F4296C02CE1B5AD /* ChoreWheelCore.swift */,
+				120B73F54A4CF310F9B7DE84 /* Assets.xcassets */,
+				676836B437FC20D5E6ADE51A /* DomainTests.swift */,
+				8FDB04235DA34FBE8D299973 /* EditorTests.swift */,
+				BCADFEB56F5E41B7C6571390 /* StoreTests.swift */,
 			);
+			sourceTree = "<group>";
+		};
+		9AE48328F7CFC01C1DC60783 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				54747D4B2160F01245E4C9C6 /* iOS */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B59D1880A6CE6835B74F400E /* ChoreWheelTests */ = {
+		6359A91329F1ACC273A97E3B /* ChoreWheel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C982F76EB9DB6407FB9EDE6 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */;
+			buildConfigurationList = CEB9AEB770484ED6BD21D0E9 /* Build configuration list for PBXNativeTarget "ChoreWheel" */;
 			buildPhases = (
-				7F1CEE6A92EE15031D403B6E /* Sources */,
-				DB8FD6D8E2D4ACB71EC7F903 /* Frameworks */,
-				B66AE788683C2C20DD0435E1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2CD167B74CE46A037758405F /* PBXTargetDependency */,
-			);
-			name = ChoreWheelTests;
-			productName = ChoreWheelTests;
-			productReference = 0EFA99FB6257040A8A5AA874 /* ChoreWheelTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		F2C0195CCE52D1B6C199AF11 /* ChoreWheel */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 557ECF394A35B6F2D538B129 /* Build configuration list for PBXNativeTarget "ChoreWheel" */;
-			buildPhases = (
-				338111F74743FEDC0A86086E /* Sources */,
-				760DA0D536BAA9F8C383DFC8 /* Frameworks */,
-				A0C16016A605A5ADBC849DE7 /* Resources */,
+				5EEB2C2CF8F2B4D6492AF464 /* Sources */,
+				FCC58C5185D04E2F44D0279A /* Frameworks */,
+				76CD34C81BC4CD6B303CFDC9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -139,19 +130,37 @@
 			);
 			name = ChoreWheel;
 			productName = ChoreWheel;
-			productReference = 63CB12098644CEF52E015D1D /* ChoreWheel.app */;
+			productReference = 16E7A96E1C16A8AB0D592200 /* ChoreWheel.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CF3BDFE17A83C0A972E25909 /* ChoreWheelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5743E9C327CEADE91DA562E5 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */;
+			buildPhases = (
+				F4A69F3DAB44690F2C87247C /* Sources */,
+				E35835D93DA9C0F44264D234 /* Frameworks */,
+				015EC1E0CF90742957E3B981 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1616DCC94CE913A6D2D0278F /* PBXTargetDependency */,
+			);
+			name = ChoreWheelTests;
+			productName = ChoreWheelTests;
+			productReference = 12CC7D7530981AC7A4529B86 /* ChoreWheelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C8630F59DF7BD1DFD464BA0D /* Project object */ = {
+		310C59098AFF96F8390A64F6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 			};
-			buildConfigurationList = CB33987990604651C478431F /* Build configuration list for PBXProject "ChoreWheel" */;
+			buildConfigurationList = E37E6D4731020D1FE4C5CF31 /* Build configuration list for PBXProject "ChoreWheel" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -159,97 +168,75 @@
 				en,
 				Base,
 			);
-			mainGroup = EAA7F36AFBD883220487271A;
+			mainGroup = 84195C6F52FAAD6A2003F4A2;
 			minimizedProjectReferenceProxies = 0;
 			preferredProjectObjectVersion = 100;
-			productRefGroup = 386567185D6CCB6ED02211F0 /* Products */;
+			productRefGroup = 055898C6328998CF27C97067 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F2C0195CCE52D1B6C199AF11 /* ChoreWheel */,
-				B59D1880A6CE6835B74F400E /* ChoreWheelTests */,
+				6359A91329F1ACC273A97E3B /* ChoreWheel */,
+				CF3BDFE17A83C0A972E25909 /* ChoreWheelTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A0C16016A605A5ADBC849DE7 /* Resources */ = {
+		015EC1E0CF90742957E3B981 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E932428EED36FB8C36582D3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B66AE788683C2C20DD0435E1 /* Resources */ = {
+		76CD34C81BC4CD6B303CFDC9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B086A9CACEBAE24930968FBA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		338111F74743FEDC0A86086E /* Sources */ = {
+		5EEB2C2CF8F2B4D6492AF464 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6CBFFDD79C708355046BE08 /* ChoreWheelApp.swift in Sources */,
-				0E0C44456CD1107454C583D7 /* ContentView.swift in Sources */,
-				AF6AEF1AD7BAE33ED924FD41 /* TodayBoardView.swift in Sources */,
-				15C15C14DF61317DAC371888 /* ChoreStore.swift in Sources */,
-				0A16AAE7F0F9A5496E37606C /* ChoreWheelCore.swift in Sources */,
+				D8021667D0468B9569511286 /* ChoreWheelApp.swift in Sources */,
+				766B190276F5E15CF32B3D94 /* ContentView.swift in Sources */,
+				8439EBCA76F57F7341540BB9 /* ManagementView.swift in Sources */,
+				7C4616FE13EE05D11765E886 /* TodayBoardView.swift in Sources */,
+				EBB7945946BFE2687B4562E4 /* BoardEditor.swift in Sources */,
+				63C89DD56CDA17FA6487C469 /* ChoreStore.swift in Sources */,
+				37FECEB329AF1E3130115E64 /* ChoreWheelCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7F1CEE6A92EE15031D403B6E /* Sources */ = {
+		F4A69F3DAB44690F2C87247C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92FA5FB660420E8D48144AC7 /* DomainTests.swift in Sources */,
-				14A2A74D99A6854D1090931B /* StoreTests.swift in Sources */,
+				73B0776BDFB4DF7C1352EF95 /* DomainTests.swift in Sources */,
+				8F9EEA9FCC51171DC313C082 /* EditorTests.swift in Sources */,
+				88323CD86D021CCCE65C042E /* StoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2CD167B74CE46A037758405F /* PBXTargetDependency */ = {
+		1616DCC94CE913A6D2D0278F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ChoreWheel;
-			target = F2C0195CCE52D1B6C199AF11 /* ChoreWheel */;
-			targetProxy = A51DA753E76527E5806591B4 /* PBXContainerItemProxy */;
+			target = 6359A91329F1ACC273A97E3B /* ChoreWheel */;
+			targetProxy = 46F8848A5673B506625F92EB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1690BF6AFAB7F06722A1F84F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel;
-				PRODUCT_NAME = ChoreWheel;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		4345E9A61D39D5BB02B0FA6D /* Release */ = {
+		4114EDCBE2A67558F367ED8E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -308,7 +295,22 @@
 			};
 			name = Release;
 		};
-		B0AE4E3316D2597CF565BE05 /* Debug */ = {
+		7782227567ED1E606E1DA8EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChoreWheel.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ChoreWheel";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7C24C3427AA8B4287814B34B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -322,7 +324,32 @@
 			};
 			name = Debug;
 		};
-		D771B3BDE21EA9C4EA50521B /* Debug */ = {
+		7FF87EE83B48BF721E3213E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel;
+				PRODUCT_NAME = ChoreWheel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BC53B3DE5F974525F60BDD47 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -346,7 +373,7 @@
 			};
 			name = Debug;
 		};
-		E711A7EE83965F2E33254E48 /* Debug */ = {
+		D90B25E58047410B0535491E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -412,52 +439,37 @@
 			};
 			name = Debug;
 		};
-		F794BED86D75B47DEAF0A7DC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.chorewheel.tests;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChoreWheel.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ChoreWheel";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C982F76EB9DB6407FB9EDE6 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */ = {
+		5743E9C327CEADE91DA562E5 /* Build configuration list for PBXNativeTarget "ChoreWheelTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F794BED86D75B47DEAF0A7DC /* Release */,
-				B0AE4E3316D2597CF565BE05 /* Debug */,
+				7782227567ED1E606E1DA8EB /* Release */,
+				7C24C3427AA8B4287814B34B /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		557ECF394A35B6F2D538B129 /* Build configuration list for PBXNativeTarget "ChoreWheel" */ = {
+		CEB9AEB770484ED6BD21D0E9 /* Build configuration list for PBXNativeTarget "ChoreWheel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1690BF6AFAB7F06722A1F84F /* Release */,
-				D771B3BDE21EA9C4EA50521B /* Debug */,
+				7FF87EE83B48BF721E3213E9 /* Release */,
+				BC53B3DE5F974525F60BDD47 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CB33987990604651C478431F /* Build configuration list for PBXProject "ChoreWheel" */ = {
+		E37E6D4731020D1FE4C5CF31 /* Build configuration list for PBXProject "ChoreWheel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E711A7EE83965F2E33254E48 /* Debug */,
-				4345E9A61D39D5BB02B0FA6D /* Release */,
+				D90B25E58047410B0535491E /* Debug */,
+				4114EDCBE2A67558F367ED8E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = C8630F59DF7BD1DFD464BA0D /* Project object */;
+	rootObject = 310C59098AFF96F8390A64F6 /* Project object */;
 }

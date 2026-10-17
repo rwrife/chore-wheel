@@ -10,12 +10,20 @@ struct ContentView: View {
     var body: some View {
         switch store {
         case .success(let store):
-            TodayBoardRoot(store: store)
+            TabView {
+                TodayBoardRoot(store: store)
+                    .id(todayRevision)
+                    .tabItem { Label("Today", systemImage: "checkmark.circle") }
+                ManagementView(store: store) { todayRevision += 1 }
+                    .tabItem { Label("Manage", systemImage: "list.bullet") }       
+            }
         case .failure:
             ContentUnavailableView("Board unavailable", systemImage: "exclamationmark.triangle",
                                    description: Text("Could not read local chores. Your data was not replaced."))
         }
     }
+
+    @State private var todayRevision = 0
 }
 
 private struct TodayBoardRoot: View {

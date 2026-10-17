@@ -91,7 +91,7 @@ public final class ChoreStore {
                 switch row.event.payload {
                 case .choreAdded(let chore), .choreUpdated(let chore): expectedID = chore.id
                 case .assigned(let id, _, _), .completed(let id, _, _), .missed(let id, _, _),
-                     .swapRequested(let id, _, _): expectedID = id
+                     .swapRequested(let id, _, _), .assignmentReleased(let id): expectedID = id
                 case .completionUndone(let id):
                     expectedID = rows.first(where: { $0.event.id == id })?.choreID
                 case .swapAccepted(let id, _, _), .swapDeclined(let id, _):
@@ -133,6 +133,11 @@ public final class ChoreStore {
         try readEvents(choreID: choreID)
     }
 
+    /// Read the complete append-only audit trail in durable insertion order.
+    public func allEvents() throws -> [ChoreEvent] {
+        try readEvents(choreID: nil)
+    }
+
     public func append(_ event: ChoreEvent) throws {
         var next = ledger
         try next.append(event) // Reject invalid transitions before any disk mutation.
@@ -141,7 +146,7 @@ public final class ChoreStore {
         switch event.payload {
         case .choreAdded(let chore), .choreUpdated(let chore): choreID = chore.id
         case .assigned(let id, _, _), .completed(let id, _, _), .missed(let id, _, _),
-             .swapRequested(let id, _, _): choreID = id
+             .swapRequested(let id, _, _), .assignmentReleased(let id): choreID = id
         case .completionUndone(let id): choreID = state.undoableCompletions[id]?.assignment.choreID
         case .swapAccepted(let requestID, _, _), .swapDeclined(let requestID, _):
             choreID = state.pendingSwaps[requestID]?.choreID

@@ -131,6 +131,9 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
     }
 
     public func refresh() {
+        // Lazy recurrence: due repeating chores enter rotation before we read
+        // the board. Failures leave the last-known board intact, never data.
+        _ = try? BoardEditor.materializeDue(on: currentDay, in: store)
         let state = store.boardState()
         let assignments = store.today(on: currentDay)
         dueTodayOrOverdue = assignments.compactMap { a in
