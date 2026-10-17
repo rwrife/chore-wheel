@@ -17,6 +17,8 @@ public struct Member: Codable, Sendable, Equatable, Identifiable {
 public enum Cadence: Codable, Sendable, Equatable, Hashable {
     case daily
     case weekly
+    /// Weekly repeat pinned to ISO weekday numbers (1 = Monday ... 7 = Sunday).
+    case weeklyOn(days: Set<Int>)
     case monthly
     case everyDays(Int)
     case adHoc
@@ -26,10 +28,16 @@ public enum Cadence: Codable, Sendable, Equatable, Hashable {
         switch self {
         case .daily: 1
         case .weekly: 7
+        case .weeklyOn: 7
         case .monthly: 30
         case .everyDays(let days): days
         case .adHoc: nil
         }
+    }
+
+    /// ISO weekdays for `.weeklyOn`, else nil.
+    public var weekdays: Set<Int>? {
+        if case .weeklyOn(let days) = self { days } else { nil }
     }
 }
 
@@ -86,6 +94,10 @@ public enum ChoreEventPayload: Codable, Sendable, Equatable {
     case completed(choreID: UUID, memberID: UUID, on: ChoreDay)
     case completionUndone(completionEventID: UUID)
     case missed(choreID: UUID, memberID: UUID, on: ChoreDay)
+    /// Editor-released open assignment (pause, member deactivation, or an
+    /// edit that orphaned the assignee). Deliberately NOT `missed`: the work
+    /// was never judged undone, so fairness counts stay honest.
+    case assignmentReleased(choreID: UUID)
     case swapRequested(choreID: UUID, fromMemberID: UUID, toMemberID: UUID)
     case swapAccepted(requestEventID: UUID, byMemberID: UUID, on: ChoreDay)
     case swapDeclined(requestEventID: UUID, byMemberID: UUID)
@@ -290,6 +302,10 @@ public struct ChoreLedger: Sendable, Equatable {
             var summary = s.fairness[memberID] ?? FairnessSummary()
             summary.missedCount += 1
             s.fairness[memberID] = summary
+        case .assignmentReleased(let choreID):
+            guard s.openAssignments[choreID] != nil else { throw LedgerError.unknownChore(choreID) }
+            s.openAssignments[choreID] = nil
+            s.pendingSwaps = s.pendingSwaps.filter { $0.value.choreID != choreID }
         case .swapRequested(let choreID, let fromMemberID, let toMemberID):
             guard s.openAssignments[choreID]?.memberID == fromMemberID else {
                 throw LedgerError.memberNotEligible(choreID: choreID, memberID: fromMemberID)
