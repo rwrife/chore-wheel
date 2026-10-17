@@ -145,7 +145,7 @@ public enum BoardEditor {
         let before = store.boardState()
         guard let previous = before.chores[choreID] else { throw LedgerError.unknownChore(choreID) }
         try validate(draft: draft, against: before)
-        let edited = draft.chore(id: choreID)
+        let edited = draft.chore(id: choreID, isActive: previous.isActive)
         try store.append(ChoreEvent(timestamp: now, payload: .choreUpdated(edited)))
         var state = store.boardState()
 
@@ -250,10 +250,10 @@ public enum BoardEditor {
             self.eligibleMemberIDs = eligibleMemberIDs
         }
 
-        public func chore(id: UUID) -> Chore {
+        public func chore(id: UUID, isActive: Bool = true) -> Chore {
             Chore(id: id, title: BoardEditor.trimmed(title), area: BoardEditor.trimmed(area),
                   effortMinutes: effortMinutes, cadence: cadence,
-                  eligibleMemberIDs: eligibleMemberIDs, isActive: true)
+                  eligibleMemberIDs: eligibleMemberIDs, isActive: isActive)
         }
     }
 

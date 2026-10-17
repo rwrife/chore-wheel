@@ -136,6 +136,11 @@ struct EditorTests {
         #expect(store.boardState().fairness[ana]?.completedCount == 1)
         #expect(store.boardState().openAssignments[choreID] == nil)
 
+        // Editing a paused chore must not silently reactivate it.
+        try BoardEditor.applyEdit(to: choreID, draft: draft, in: store)
+        #expect(store.boardState().chores[choreID]?.isActive == false)
+        #expect(store.boardState().openAssignments[choreID] == nil)
+
         // Reactivating it re-assigns to the next rotation candidate (Bo, who has 0 effort).
         try BoardEditor.setChoreActive(choreID, active: true, in: store)
         #expect(store.boardState().chores[choreID]?.isActive == true)
