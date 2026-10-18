@@ -14,6 +14,8 @@ public enum ChoreWorkspaceLayout {
 public struct TodayBoardView: View {
     @ObservedObject public var model: TodayBoardModel
     private let layout: ChoreWorkspaceLayout = .singleScreen
+    @State private var swapItem: ChoreItemDisplay?
+    @State private var showAudit = false
 
     public init(model: TodayBoardModel) {
         self.model = model
@@ -39,8 +41,10 @@ public struct TodayBoardView: View {
                                     .accessibilityAddTraits(.isHeader)
 
                                 ForEach(model.dueTodayOrOverdue, id: \.choreID) { item in
-                                    ChoreCardView(item: item) {
+                                    ChoreCardView(item: item, swap: model.swapSummary(for: item)) {
                                         model.completeChore(item: item)
+                                    } onSwap: {
+                                        swapItem = item
                                     }
                                 }
                             }
@@ -60,6 +64,14 @@ public struct TodayBoardView: View {
                 }
             }
             .navigationTitle("Today")
+            .toolbar {
+                Button("History", systemImage: "clock.arrow.circlepath") { showAudit = true }
+                    .accessibilityLabel("Chore history")
+            }
+            .navigationDestination(isPresented: $showAudit) { AuditLogView(model: model) }
+            .sheet(item: $swapItem) { item in
+                SwapSheet(item: item, model: model)
+            }
         }
     }
 }
@@ -116,6 +128,8 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
 
 @MainActor public final class TodayBoardModel: ObservableObject {
     @Published public private(set) var dueTodayOrOverdue: [ChoreItemDisplay] = []
+    @Published public private(set) var board = BoardState()
+    @Published public private(set) var errorMessage: String?
     @Published public private(set) var undoNotice: UndoNotice?
 
     private let store: ChoreStore
@@ -135,6 +149,7 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
         // the board. Failures leave the last-known board intact, never data.
         _ = try? BoardEditor.materializeDue(on: currentDay, in: store)
         let state = store.boardState()
+        board = state
         let assignments = store.today(on: currentDay)
         dueTodayOrOverdue = assignments.compactMap { a in
             guard let chore = state.chores[a.choreID],
@@ -150,6 +165,53 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
             )
         }
     }
+
+    public func pendingSwap(for item: ChoreItemDisplay) -> PendingSwap? {
+        board.pendingSwaps.values.first { $0.choreID == item.choreID }
+    }
+
+    public func swapSummary(for item: ChoreItemDisplay) -> String? {
+        guard let pending = pendingSwap(for: item) else { return nil }
+        if let target = pending.toMemberID {
+            return "Swap pending with \(board.members[target]?.name ?? "unknown member")"
+        }
+        return "Open grab pending"
+    }
+
+    public func eligibleRecipients(for item: ChoreItemDisplay) -> [Member] {
+        guard let chore = board.chores[item.choreID] else { return [] }
+        return board.memberOrder.compactMap { board.members[$0] }.filter {
+            $0.id != item.assigneeID && $0.isActive && chore.eligibleMemberIDs.contains($0.id)
+        }
+    }
+
+    public func requestSwap(for item: ChoreItemDisplay, to memberID: UUID?) {
+        record(.swapRequested(choreID: item.choreID, fromMemberID: item.assigneeID, toMemberID: memberID))
+    }
+
+    public func acceptSwap(_ request: PendingSwap, by memberID: UUID) {
+        record(.swapAccepted(requestEventID: request.requestEventID, byMemberID: memberID, on: currentDay))
+    }
+
+    public func declineSwap(_ request: PendingSwap) {
+        guard let recipient = request.toMemberID else { return }
+        record(.swapDeclined(requestEventID: request.requestEventID, byMemberID: recipient))
+    }
+
+    public func withdrawSwap(_ request: PendingSwap) {
+        record(.swapCancelled(requestEventID: request.requestEventID, byMemberID: request.fromMemberID))
+    }
+
+    public func clearError() { errorMessage = nil }
+
+    private func record(_ payload: ChoreEventPayload) {
+        do {
+            try store.append(ChoreEvent(timestamp: Date(), payload: payload))
+            refresh()
+        } catch { errorMessage = error.localizedDescription }
+    }
+
+    public func auditEntries() throws -> [AuditEntry] { AuditTrail.entries(try store.allEvents()) }
 
     public func completeChore(item: ChoreItemDisplay, date: Date = Date()) {
         let completionEvent = ChoreEvent(
@@ -194,7 +256,9 @@ public final class DefaultHapticGenerator: FeedbackGenerator {
 
 public struct ChoreCardView: View {
     public let item: ChoreItemDisplay
+    public let swap: String?
     public let onComplete: () -> Void
+    public let onSwap: () -> Void
 
     public var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -234,9 +298,27 @@ public struct ChoreCardView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+
+                if let swap {
+                    Label(swap, systemImage: "arrow.left.arrow.right")
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(.orange)
+                        .accessibilityIdentifier("swap.pending.\(item.choreID.uuidString)")
+                }
             }
 
             Spacer(minLength: 8)
+
+            Button(action: onSwap) {
+                Image(systemName: "arrow.left.arrow.right")
+                    .frame(width: 28, height: 28)
+                    .padding(8)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.blue)
+            .accessibilityLabel(swap == nil ? "Swap \(item.title)" : "Manage swap for \(item.title)")
+            .accessibilityIdentifier("swap.open.\(item.choreID.uuidString)")
 
             // Prominent one-thumb tap target: min 44x44
             Button(action: onComplete) {
@@ -254,6 +336,122 @@ public struct ChoreCardView: View {
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+private struct SwapSheet: View {
+    let item: ChoreItemDisplay
+    @ObservedObject var model: TodayBoardModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var decision: Decision?
+
+    private enum Decision {
+        case request(UUID?)
+        case accept(UUID)
+        case decline
+        case withdraw
+    }
+
+    private var pending: PendingSwap? { model.pendingSwap(for: item) }
+    private var recipients: [Member] { model.eligibleRecipients(for: item) }
+
+    private var prompt: String {
+        switch decision {
+        case .request: "Confirm you are \(item.assigneeName) requesting this handoff. Profiles are local names, not verified accounts."
+        case .accept(let id): "Hand this phone to \(model.board.members[id]?.name ?? "recipient"). They must confirm taking \(item.title)."
+        case .decline: "Hand this phone to the named recipient to confirm decline."
+        case .withdraw: "Confirm you are \(item.assigneeName) withdrawing this request."
+        case nil: ""
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text("\(item.title) · assigned to \(item.assigneeName)")
+                    Text("This phone holds local named profiles. Confirmations record the selected name, not verified identity.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                if let pending {
+                    Section("Pending handoff") {
+                        Text(model.swapSummary(for: item) ?? "Pending")
+                        if let id = pending.toMemberID {
+                            let name = model.board.members[id]?.name ?? "Recipient"
+                            Button("Accept as \(name)") { decision = .accept(id) }
+                                .disabled(!recipients.contains(where: { $0.id == id }))
+                            Button("Decline as \(name)") { decision = .decline }
+                        } else {
+                            ForEach(recipients) { member in
+                                Button("Accept as \(member.name)") { decision = .accept(member.id) }
+                            }
+                        }
+                        Button("Withdraw as \(item.assigneeName)", role: .destructive) { decision = .withdraw }
+                    }
+                } else {
+                    Section("Request handoff") {
+                        ForEach(recipients) { member in
+                            Button("Ask \(member.name) to take this chore") { decision = .request(member.id) }
+                        }
+                        Button("Offer to anyone eligible") { decision = .request(nil) }
+                            .disabled(recipients.isEmpty)
+                    }
+                }
+            }
+            .navigationTitle("Handoff")
+            .toolbar { Button("Done") { dismiss() } }
+            .alert("Confirm handoff", isPresented: Binding(
+                get: { decision != nil }, set: { if !$0 { decision = nil } }
+            )) {
+                Button("Confirm") {
+                    switch decision {
+                    case .request(let id): model.requestSwap(for: item, to: id)
+                    case .accept(let id): if let pending { model.acceptSwap(pending, by: id) }
+                    case .decline: if let pending { model.declineSwap(pending) }
+                    case .withdraw: if let pending { model.withdrawSwap(pending) }
+                    case nil: break
+                    }
+                    decision = nil
+                    if model.errorMessage == nil { dismiss() }
+                }
+                Button("Cancel", role: .cancel) { decision = nil }
+            } message: { Text(prompt) }
+            .alert("Could not update handoff", isPresented: Binding(
+                get: { model.errorMessage != nil }, set: { if !$0 { model.clearError() } }
+            )) {
+                Button("OK", role: .cancel) { model.clearError() }
+            } message: { Text(model.errorMessage ?? "Unknown error") }
+        }
+    }
+}
+
+private struct AuditLogView: View {
+    @ObservedObject var model: TodayBoardModel
+    @State private var entries: [AuditEntry] = []
+    @State private var error: String?
+
+    var body: some View {
+        List {
+            if let error {
+                Text("Could not load history: \(error)")
+            } else if entries.isEmpty {
+                ContentUnavailableView("No check-ins or handoffs yet", systemImage: "clock")
+            } else {
+                ForEach(entries) { entry in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(entry.summary)
+                        Text(entry.timestamp, format: .dateTime.year().month().day().hour().minute())
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
+        }
+        .navigationTitle("History")
+        .onAppear {
+            do { entries = try model.auditEntries() }
+            catch { self.error = error.localizedDescription }
+        }
     }
 }
 

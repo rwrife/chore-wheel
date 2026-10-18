@@ -266,3 +266,130 @@ struct DomainTests {
                 RotationEngine.nextAssignee(chore: task(floors), state: ledger.boardState()))
     }
 }
+
+@Suite("Swap handoffs and audit trail")
+struct SwapAuditTests {
+    private func assigned() throws -> ChoreLedger {
+        var ledger = try seed()
+        try ledger.append(.assigned(choreID: dishes, memberID: ana, on: day(1)))
+        return ledger
+    }
+
+    @Test("open grab: any eligible non-requester may accept; requester cannot")
+    func openGrab() throws {
+        var ledger = try assigned()
+        let request = ChoreEvent(payload: .swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: nil))
+        try ledger.append(request)
+        #expect(throws: LedgerError.swapRequesterCannotAccept(memberID: ana)) {
+            try ledger.append(.swapAccepted(requestEventID: request.id, byMemberID: ana, on: day(1)))
+        }
+        #expect(throws: LedgerError.wrongSwapRecipient(cy)) {
+            try ledger.append(.swapDeclined(requestEventID: request.id, byMemberID: cy))
+        }
+        try ledger.append(.swapAccepted(requestEventID: request.id, byMemberID: cy, on: day(1)))
+        #expect(ledger.boardState().openAssignments[dishes]?.memberID == cy)
+        #expect(ledger.boardState().pendingSwaps.isEmpty)
+    }
+
+    @Test("swap request guards: self-target, no candidates, ineligible, withdraw rights")
+    func guards() throws {
+        var ledger = try assigned()
+        #expect(throws: LedgerError.swapRequesterCannotAccept(memberID: ana)) {
+            try ledger.append(.swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: ana))
+        }
+        let request = ChoreEvent(payload: .swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: bo))
+        try ledger.append(request)
+        #expect(throws: LedgerError.notSwapRequester(memberID: bo)) {
+            try ledger.append(.swapCancelled(requestEventID: request.id, byMemberID: bo))
+        }
+        try ledger.append(.swapCancelled(requestEventID: request.id, byMemberID: ana))
+        #expect(ledger.boardState().pendingSwaps.isEmpty)
+        #expect(ledger.boardState().openAssignments[dishes]?.memberID == ana)
+
+        var solo = ChoreLedger()
+        try solo.append(.memberAdded(person(ana)))
+        try solo.append(.choreAdded(task(dishes, eligible: [ana])))
+        try solo.append(.assigned(choreID: dishes, memberID: ana, on: day(1)))
+        #expect(throws: LedgerError.noSwapCandidates(choreID: dishes)) {
+            try solo.append(.swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: nil))
+        }
+    }
+
+    @Test("accepted swap moves open effort without penalizing the original assignee")
+    func fairness() throws {
+        var ledger = try assigned()
+        let request = ChoreEvent(payload: .swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: bo))
+        try ledger.append(request)
+        try ledger.append(.swapAccepted(requestEventID: request.id, byMemberID: bo, on: day(1)))
+        try ledger.append(.completed(choreID: dishes, memberID: bo, on: day(1)))
+        let fairness = ledger.boardState().fairness
+        #expect(fairness[ana]?.completedCount == 0 && fairness[ana]?.missedCount == 0)
+        #expect(fairness[bo]?.completedEffortMinutes == 10 && fairness[bo]?.completedCount == 1)
+    }
+
+    @Test("releasing a chore cancels open grabs and declines targeted swaps")
+    func releaseCleansPending() throws {
+        let store = try ChoreStore()
+        let a = try BoardEditor.addMember(named: "Ana", to: store)
+        let b = try BoardEditor.addMember(named: "Bo", to: store)
+        let id = try BoardEditor.addChore(
+            .init(title: "Dishes", area: "Kitchen", effortMinutes: 10, cadence: .daily, eligibleMemberIDs: [a, b]),
+            to: store)
+        let owner = try #require(store.boardState().openAssignments[id]?.memberID)
+        try store.append(ChoreEvent(payload: .swapRequested(choreID: id, fromMemberID: owner, toMemberID: nil)))
+        try BoardEditor.setChoreActive(id, active: false, in: store)
+        #expect(store.boardState().pendingSwaps.isEmpty)
+        let kinds = try store.allEvents().compactMap { e -> String? in
+            if case .swapCancelled = e.payload { return "cancelled" } else { return nil }
+        }
+        #expect(kinds == ["cancelled"])
+    }
+
+    @Test("pending open grab survives store reopen")
+    func persistence() throws {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("chorewheel-swap-\(UUID().uuidString).sqlite")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let request = ChoreEvent(payload: .swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: nil))
+        do {
+            let store = try ChoreStore(url: url)
+            for payload in [ChoreEventPayload.memberAdded(person(ana)), .memberAdded(person(bo)),
+                            .choreAdded(task(dishes, eligible: [ana, bo])),
+                            .assigned(choreID: dishes, memberID: ana, on: day(1))] {
+                try store.append(ChoreEvent(payload: payload))
+            }
+            try store.append(request)
+        }
+        let reopened = try ChoreStore(url: url)
+        #expect(reopened.boardState().pendingSwaps[request.id]?.toMemberID == nil)
+        #expect(reopened.boardState().pendingSwaps.count == 1)
+        try reopened.append(ChoreEvent(payload: .swapCancelled(requestEventID: request.id, byMemberID: ana)))
+        #expect(try ChoreStore(url: url).boardState().pendingSwaps.isEmpty)
+    }
+
+    @Test("audit trail is chronological, resolves names as of each event, records both participants")
+    func audit() throws {
+        let t = { (s: TimeInterval) in Date(timeIntervalSince1970: s) }
+        let request = ChoreEvent(id: UUID(), timestamp: t(30),
+                                 payload: .swapRequested(choreID: dishes, fromMemberID: ana, toMemberID: bo))
+        let renamed = Member(id: ana, name: "Anna")
+        let done = ChoreEvent(id: UUID(), timestamp: t(50), payload: .completed(choreID: dishes, memberID: bo, on: day(1)))
+        let events = [
+            ChoreEvent(timestamp: t(1), payload: .memberAdded(person(ana))),
+            ChoreEvent(timestamp: t(2), payload: .memberAdded(person(bo))),
+            ChoreEvent(timestamp: t(3), payload: .choreAdded(task(dishes, eligible: [ana, bo]))),
+            ChoreEvent(timestamp: t(4), payload: .assigned(choreID: dishes, memberID: ana, on: day(1))),
+            request,
+            ChoreEvent(timestamp: t(40), payload: .swapAccepted(requestEventID: request.id, byMemberID: bo, on: day(1))),
+            ChoreEvent(timestamp: t(45), payload: .memberUpdated(renamed)),
+            done,
+        ]
+        let entries = AuditTrail.entries(events)
+        #expect(entries.map(\.summary) == [
+            "Ana asked Bo to take Dishes",
+            "Bo accepted Dishes from Ana",
+            "Bo completed Dishes",
+        ])
+        #expect(entries.map(\.timestamp) == [t(30), t(40), t(50)])
+    }
+}
