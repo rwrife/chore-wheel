@@ -98,7 +98,9 @@ public enum ChoreEventPayload: Codable, Sendable, Equatable {
     /// edit that orphaned the assignee). Deliberately NOT `missed`: the work
     /// was never judged undone, so fairness counts stay honest.
     case assignmentReleased(choreID: UUID)
-    case swapRequested(choreID: UUID, fromMemberID: UUID, toMemberID: UUID)
+    /// Nil recipient offers chore to any eligible active member; acceptance still requires explicit consent.
+    case swapRequested(choreID: UUID, fromMemberID: UUID, toMemberID: UUID?)
+    case swapCancelled(requestEventID: UUID, byMemberID: UUID)
     case swapAccepted(requestEventID: UUID, byMemberID: UUID, on: ChoreDay)
     case swapDeclined(requestEventID: UUID, byMemberID: UUID)
 }
@@ -152,7 +154,7 @@ public struct PendingSwap: Codable, Sendable, Equatable {
     public let requestEventID: UUID
     public let choreID: UUID
     public let fromMemberID: UUID
-    public let toMemberID: UUID
+    public let toMemberID: UUID?
 }
 
 /// Pure projection of the event log. `memberOrder` preserves ledger insertion
@@ -183,6 +185,9 @@ public enum LedgerError: Error, Equatable {
     case swapAlreadyPending(choreID: UUID)
     case unknownSwapRequest(UUID)
     case wrongSwapRecipient(UUID)
+    case notSwapRequester(memberID: UUID)
+    case noSwapCandidates(choreID: UUID)
+    case swapRequesterCannotAccept(memberID: UUID)
     case undoUnavailable(UUID)
     case undoExpired(UUID)
     case invalidEventTimestamp
@@ -310,18 +315,36 @@ public struct ChoreLedger: Sendable, Equatable {
             guard s.openAssignments[choreID]?.memberID == fromMemberID else {
                 throw LedgerError.memberNotEligible(choreID: choreID, memberID: fromMemberID)
             }
-            try validateAssignment(choreID: choreID, memberID: toMemberID, in: s)
+            if let toMemberID {
+                guard toMemberID != fromMemberID else { throw LedgerError.swapRequesterCannotAccept(memberID: toMemberID) }
+                try validateAssignment(choreID: choreID, memberID: toMemberID, in: s)
+            } else {
+                guard let chore = s.chores[choreID], chore.eligibleMemberIDs.contains(where: {
+                    $0 != fromMemberID && s.members[$0]?.isActive == true
+                }) else { throw LedgerError.noSwapCandidates(choreID: choreID) }
+            }
             guard !s.pendingSwaps.values.contains(where: { $0.choreID == choreID }) else {
                 throw LedgerError.swapAlreadyPending(choreID: choreID)
             }
             s.pendingSwaps[event.id] = PendingSwap(requestEventID: event.id, choreID: choreID,
                                                    fromMemberID: fromMemberID, toMemberID: toMemberID)
+        case .swapCancelled(let requestEventID, let byMemberID):
+            guard let request = s.pendingSwaps[requestEventID] else { throw LedgerError.unknownSwapRequest(requestEventID) }
+            guard request.fromMemberID == byMemberID else { throw LedgerError.notSwapRequester(memberID: byMemberID) }
+            s.pendingSwaps[requestEventID] = nil
         case .swapAccepted(let requestEventID, let byMemberID, let date):
             guard let request = s.pendingSwaps[requestEventID] else {
                 throw LedgerError.unknownSwapRequest(requestEventID)
             }
-            // Consent: only the requested member may accept.
-            guard request.toMemberID == byMemberID else { throw LedgerError.wrongSwapRecipient(byMemberID) }
+            // Consent: a targeted swap may only be accepted by its recipient.
+            if let target = request.toMemberID {
+                guard target == byMemberID else { throw LedgerError.wrongSwapRecipient(byMemberID) }
+            } else {
+                // Open grab: any eligible active member except the requester.
+                guard byMemberID != request.fromMemberID else {
+                    throw LedgerError.swapRequesterCannotAccept(memberID: byMemberID)
+                }
+            }
             // Consent is only valid while the recipient can still do the chore.
             try validateAssignment(choreID: request.choreID, memberID: byMemberID, in: s)
             s.pendingSwaps[requestEventID] = nil
@@ -336,7 +359,11 @@ public struct ChoreLedger: Sendable, Equatable {
             guard let request = s.pendingSwaps[requestEventID] else {
                 throw LedgerError.unknownSwapRequest(requestEventID)
             }
-            guard request.toMemberID == byMemberID else { throw LedgerError.wrongSwapRecipient(byMemberID) }
+            // Only the named recipient can decline a targeted swap. Open grabs
+            // are withdrawn by their requester via `.swapCancelled`.
+            guard let target = request.toMemberID, target == byMemberID else {
+                throw LedgerError.wrongSwapRecipient(byMemberID)
+            }
             s.pendingSwaps[requestEventID] = nil
         }
         return s
@@ -389,5 +416,57 @@ public enum RotationEngine {
             }
         }
         return best?.id
+    }
+}
+
+// MARK: - Audit trail
+
+public struct AuditEntry: Identifiable, Equatable, Sendable {
+    public let id: UUID
+    public let timestamp: Date
+    public let summary: String
+}
+
+/// Chronological, human-readable projection of completions and swaps.
+/// Names are resolved as of each event, so later renames never rewrite history.
+public enum AuditTrail {
+    public static func entries(_ events: [ChoreEvent]) -> [AuditEntry] {
+        var members: [UUID: String] = [:]
+        var chores: [UUID: String] = [:]
+        var requests: [UUID: (chore: UUID, from: UUID, to: UUID?)] = [:]
+        var completions: [UUID: (chore: UUID, member: UUID)] = [:]
+        var out: [AuditEntry] = []
+        func who(_ id: UUID) -> String { members[id] ?? "Unknown member" }
+        func what(_ id: UUID) -> String { chores[id] ?? "Unknown chore" }
+        func add(_ event: ChoreEvent, _ text: String) {
+            out.append(AuditEntry(id: event.id, timestamp: event.timestamp, summary: text))
+        }
+        for event in events {
+            switch event.payload {
+            case .memberAdded(let m), .memberUpdated(let m): members[m.id] = m.name
+            case .choreAdded(let c), .choreUpdated(let c): chores[c.id] = c.title
+            case .completed(let chore, let member, _):
+                completions[event.id] = (chore, member)
+                add(event, "\(who(member)) completed \(what(chore))")
+            case .completionUndone(let id):
+                if let c = completions[id] { add(event, "Completion of \(what(c.chore)) by \(who(c.member)) was undone") }
+            case .swapRequested(let chore, let from, let to):
+                requests[event.id] = (chore, from, to)
+                add(event, to.map { "\(who(from)) asked \(who($0)) to take \(what(chore))" }
+                    ?? "\(who(from)) offered \(what(chore)) to anyone eligible")
+            case .swapAccepted(let id, let by, _):
+                if let r = requests[id] { add(event, "\(who(by)) accepted \(what(r.chore)) from \(who(r.from))") }
+            case .swapDeclined(let id, let by):
+                if let r = requests[id] { add(event, "\(who(by)) declined \(what(r.chore)) from \(who(r.from))") }
+            case .swapCancelled(let id, _):
+                if let r = requests[id] { add(event, "\(who(r.from)) withdrew the swap request for \(what(r.chore))") }
+            default: break
+            }
+        }
+        // Stable sort: ties keep ledger order.
+        return out.enumerated().sorted {
+            $0.element.timestamp != $1.element.timestamp
+                ? $0.element.timestamp < $1.element.timestamp : $0.offset < $1.offset
+        }.map(\.element)
     }
 }

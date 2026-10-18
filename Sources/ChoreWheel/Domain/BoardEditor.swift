@@ -280,9 +280,15 @@ public enum BoardEditor {
     /// assignment is released back to the rotation engine.
     private static func release(choreID: UUID, store: ChoreStore, state: inout BoardState, now: Date) throws {
         guard state.openAssignments[choreID] != nil else { return }
-        for swap in state.pendingSwaps.values where swap.choreID == choreID {
-            try store.append(ChoreEvent(timestamp: now,
-                payload: .swapDeclined(requestEventID: swap.requestEventID, byMemberID: swap.toMemberID)))
+        for swap in state.pendingSwaps.values.filter({ $0.choreID == choreID })
+            .sorted(by: { $0.requestEventID.uuidString < $1.requestEventID.uuidString }) {
+            if let target = swap.toMemberID {
+                try store.append(ChoreEvent(timestamp: now,
+                    payload: .swapDeclined(requestEventID: swap.requestEventID, byMemberID: target)))
+            } else {
+                try store.append(ChoreEvent(timestamp: now,
+                    payload: .swapCancelled(requestEventID: swap.requestEventID, byMemberID: swap.fromMemberID)))
+            }
         }
         try store.append(ChoreEvent(timestamp: now, payload: .assignmentReleased(choreID: choreID)))
         state = store.boardState()

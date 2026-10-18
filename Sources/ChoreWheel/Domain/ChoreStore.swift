@@ -94,14 +94,14 @@ public final class ChoreStore {
                      .swapRequested(let id, _, _), .assignmentReleased(let id): expectedID = id
                 case .completionUndone(let id):
                     expectedID = rows.first(where: { $0.event.id == id })?.choreID
-                case .swapAccepted(let id, _, _), .swapDeclined(let id, _):
+                case .swapAccepted(let id, _, _), .swapDeclined(let id, _), .swapCancelled(let id, _):
                     expectedID = openSwapChores[id]
                 default: expectedID = nil
                 }
                 guard row.choreID == expectedID else { throw ChoreStoreError.corruptLedger }
                 switch row.event.payload {
                 case .swapRequested(let choreID, _, _): openSwapChores[row.event.id] = choreID
-                case .swapAccepted(let id, _, _), .swapDeclined(let id, _): openSwapChores[id] = nil
+                case .swapAccepted(let id, _, _), .swapDeclined(let id, _), .swapCancelled(let id, _): openSwapChores[id] = nil
                 default: break
                 }
             }
@@ -148,7 +148,7 @@ public final class ChoreStore {
         case .assigned(let id, _, _), .completed(let id, _, _), .missed(let id, _, _),
              .swapRequested(let id, _, _), .assignmentReleased(let id): choreID = id
         case .completionUndone(let id): choreID = state.undoableCompletions[id]?.assignment.choreID
-        case .swapAccepted(let requestID, _, _), .swapDeclined(let requestID, _):
+        case .swapAccepted(let requestID, _, _), .swapDeclined(let requestID, _), .swapCancelled(let requestID, _):
             choreID = state.pendingSwaps[requestID]?.choreID
         default: choreID = nil
         }
