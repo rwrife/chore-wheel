@@ -138,9 +138,41 @@ public final class ChoreStore {
         try readEvents(choreID: nil)
     }
 
+    /// Replacement is a single SQLite transaction. Invalid archives never
+    /// touch disk; any insert failure rolls back both rows and in-memory state.
+    public func replace(with archive: BoardArchive) throws {
+        let events = try archive.validatedEvents()
+        let previousLedger = ledger
+        let previousState = state
+        try execute("BEGIN IMMEDIATE")
+        do {
+            try execute("DROP TRIGGER events_no_delete")
+            try execute("DELETE FROM events")
+            try execute("CREATE TRIGGER events_no_delete BEFORE DELETE ON events BEGIN SELECT RAISE(ABORT, 'immutable event'); END")
+            ledger = ChoreLedger()
+            state = BoardState()
+            for event in events { try appendToCurrentTransaction(event) }
+            try execute("COMMIT")
+        } catch {
+            try? execute("ROLLBACK")
+            ledger = previousLedger
+            state = previousState
+            throw error
+        }
+    }
+
+    public func exportArchive() throws -> Data {
+        try JSONEncoder().encode(BoardArchive(events: allEvents()))
+    }
+
     public func append(_ event: ChoreEvent) throws {
+        try appendToCurrentTransaction(event)
+    }
+
+    private func appendToCurrentTransaction(_ event: ChoreEvent) throws {
         var next = ledger
         try next.append(event) // Reject invalid transitions before any disk mutation.
+
         let data = try JSONEncoder().encode(event)
         let choreID: UUID?
         switch event.payload {
