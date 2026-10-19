@@ -16,6 +16,8 @@ struct ContentView: View {
                     .tabItem { Label("Today", systemImage: "checkmark.circle") }
                 ManagementView(store: store) { todayRevision += 1 }
                     .tabItem { Label("Manage", systemImage: "list.bullet") }       
+                ReviewView(store: store) { todayRevision += 1 }
+                    .tabItem { Label("Review", systemImage: "chart.bar.xaxis") }
             }
         case .failure:
             ContentUnavailableView("Board unavailable", systemImage: "exclamationmark.triangle",

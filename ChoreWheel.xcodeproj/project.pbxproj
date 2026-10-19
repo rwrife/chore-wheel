@@ -20,6 +20,9 @@
 		B086A9CACEBAE24930968FBA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 120B73F54A4CF310F9B7DE84 /* Assets.xcassets */; };
 		D8021667D0468B9569511286 /* ChoreWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F88830AB5DFE4D2B2FB5187 /* ChoreWheelApp.swift */; };
 		EBB7945946BFE2687B4562E4 /* BoardEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D0400F238481F107B57C23 /* BoardEditor.swift */; };
+		A7112B12CA84DA108AF01101 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7112B12CA84DA108AF01102 /* ReviewView.swift */; };
+		A7112B12CA84DA108AF01103 /* BoardArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7112B12CA84DA108AF01104 /* BoardArchive.swift */; };
+		A7112B12CA84DA108AF01105 /* ArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7112B12CA84DA108AF01106 /* ArchiveTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 		DCB301698B45AE118CF5DF14 /* TodayBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TodayBoardView.swift; path = Sources/ChoreWheel/App/TodayBoardView.swift; sourceTree = "<group>"; };
 		E9D0400F238481F107B57C23 /* BoardEditor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardEditor.swift; path = Sources/ChoreWheel/Domain/BoardEditor.swift; sourceTree = "<group>"; };
 		EAFAD9362F4296C02CE1B5AD /* ChoreWheelCore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChoreWheelCore.swift; path = Sources/ChoreWheel/Domain/ChoreWheelCore.swift; sourceTree = "<group>"; };
+		A7112B12CA84DA108AF01102 /* ReviewView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ReviewView.swift; path = Sources/ChoreWheel/App/ReviewView.swift; sourceTree = "<group>"; };
+		A7112B12CA84DA108AF01104 /* BoardArchive.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardArchive.swift; path = Sources/ChoreWheel/Domain/BoardArchive.swift; sourceTree = "<group>"; };
+		A7112B12CA84DA108AF01106 /* ArchiveTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ArchiveTests.swift; path = Tests/ChoreWheelTests/ArchiveTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,11 +100,14 @@
 				0F88830AB5DFE4D2B2FB5187 /* ChoreWheelApp.swift */,
 				7684F7F6D9D771F2B3AC6314 /* ContentView.swift */,
 				75A9859AABA05ECE575C223C /* ManagementView.swift */,
+				A7112B12CA84DA108AF01102 /* ReviewView.swift */,
 				DCB301698B45AE118CF5DF14 /* TodayBoardView.swift */,
 				E9D0400F238481F107B57C23 /* BoardEditor.swift */,
+				A7112B12CA84DA108AF01104 /* BoardArchive.swift */,
 				A8F7216A4E6349F0022596AA /* ChoreStore.swift */,
 				EAFAD9362F4296C02CE1B5AD /* ChoreWheelCore.swift */,
 				120B73F54A4CF310F9B7DE84 /* Assets.xcassets */,
+				A7112B12CA84DA108AF01106 /* ArchiveTests.swift */,
 				676836B437FC20D5E6ADE51A /* DomainTests.swift */,
 				8FDB04235DA34FBE8D299973 /* EditorTests.swift */,
 				BCADFEB56F5E41B7C6571390 /* StoreTests.swift */,
@@ -207,8 +216,10 @@
 				D8021667D0468B9569511286 /* ChoreWheelApp.swift in Sources */,
 				766B190276F5E15CF32B3D94 /* ContentView.swift in Sources */,
 				8439EBCA76F57F7341540BB9 /* ManagementView.swift in Sources */,
+				A7112B12CA84DA108AF01101 /* ReviewView.swift in Sources */,
 				7C4616FE13EE05D11765E886 /* TodayBoardView.swift in Sources */,
 				EBB7945946BFE2687B4562E4 /* BoardEditor.swift in Sources */,
+				A7112B12CA84DA108AF01103 /* BoardArchive.swift in Sources */,
 				63C89DD56CDA17FA6487C469 /* ChoreStore.swift in Sources */,
 				37FECEB329AF1E3130115E64 /* ChoreWheelCore.swift in Sources */,
 			);
@@ -218,6 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7112B12CA84DA108AF01105 /* ArchiveTests.swift in Sources */,
 				73B0776BDFB4DF7C1352EF95 /* DomainTests.swift in Sources */,
 				8F9EEA9FCC51171DC313C082 /* EditorTests.swift in Sources */,
 				88323CD86D021CCCE65C042E /* StoreTests.swift in Sources */,
