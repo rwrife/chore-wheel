@@ -72,6 +72,13 @@ jobs:
           sdk=$(DEVELOPER_DIR="$pick" xcrun --sdk iphoneos --show-sdk-version)
           [[ "$sdk" == 26.0 ]] || { echo "Expected iPhoneOS SDK 26.0; got $sdk"; exit 1; }
           echo "DEVELOPER_DIR=$pick" >> "$GITHUB_ENV"
+      - name: Require approved release icon artwork
+        run: |
+          set -euo pipefail
+          icon='AppStore/icon.png'
+          catalog='Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+          [[ -s "$icon" && -s "$catalog" ]] || { echo '::error::Approved App Store icon and asset catalog artwork required before release'; exit 1; }
+          cmp -s "$icon" "$catalog" || { echo '::error::App Store icon does not match catalog artwork'; exit 1; }
       - name: Install ASC API key and verify app record
         run: |
           set -euo pipefail
