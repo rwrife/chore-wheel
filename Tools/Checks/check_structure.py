@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import re
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -135,6 +136,45 @@ ls_check = subprocess.run(
 )
 if ls_check.returncode == 0:
     fail("AppStore/icon.png is gitignored; icon artwork must be force-tracked")
+
+# --- 5b. icon asset contract & release wiring ---------------------------------
+icon_path = ROOT / "AppStore" / "icon.png"
+if not icon_path.is_file():
+    fail("AppStore/icon.png missing")
+else:
+    raw = icon_path.read_bytes()
+    if len(raw) < 24 or raw[:8] != b"\x89PNG\r\n\x1a\n":
+        fail("AppStore/icon.png is not a valid PNG")
+    else:
+        w, h, depth, color_type = struct.unpack(">IIBB", raw[16:26])
+        if (w, h) != (1024, 1024):
+            fail(f"AppStore/icon.png dimensions {w}x{h}, expected 1024x1024")
+        if color_type not in (2, 0):  # 2 = Truecolor RGB, 0 = Grayscale (no alpha channel)
+            fail(f"AppStore/icon.png has alpha/palette (color_type={color_type}); must be opaque edge-to-edge RGB")
+
+catalog_icon = ROOT / "Resources" / "Assets.xcassets" / "AppIcon.appiconset" / "AppIcon.png"
+if not catalog_icon.is_file():
+    fail("Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png missing")
+elif catalog_icon.read_bytes() != icon_path.read_bytes():
+    fail("AppIcon.png in asset catalog does not match AppStore/icon.png")
+
+appicon_contents = ROOT / "Resources" / "Assets.xcassets" / "AppIcon.appiconset" / "Contents.json"
+try:
+    cdata = json.loads(appicon_contents.read_text())
+    imgs = cdata.get("images", [])
+    if not any(img.get("filename") == "AppIcon.png" and img.get("idiom") == "universal" for img in imgs):
+        fail("AppIcon.appiconset/Contents.json missing universal AppIcon.png entry")
+except Exception as exc:  # noqa: BLE001
+    fail(f"AppIcon.appiconset/Contents.json invalid: {exc}")
+
+release_wf = ROOT / ".github" / "workflows" / "release.yml"
+if not release_wf.is_file():
+    fail(".github/workflows/release.yml missing")
+else:
+    wf_text = release_wf.read_text()
+    for needle in ("macos-26", "ASC_KEY_ID", "ASC_ISSUER_ID", "ASC_KEY_P8", "ASC_TEAM_ID", "com.infinityball.chorewheel", "uploadMethod"):
+        if needle not in wf_text:
+            fail(f"release.yml missing expected configuration: {needle}")
 
 # --- 6. zero-network gate -------------------------------------------------------
 NET_PATTERNS = re.compile(
