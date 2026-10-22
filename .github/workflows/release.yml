@@ -1,0 +1,198 @@
+name: Release (TestFlight)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'VERSION file value (for example 0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      ASC_TEAM_ID: ${{ secrets.ASC_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check version and release secrets
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          for name in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8 ASC_TEAM_ID; do
+            [[ -n "${!name:-}" ]] || { echo "::error::Missing $name"; exit 1; }
+          done
+          version=$(<VERSION)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Invalid VERSION file'; exit 1; }
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            [[ "$REQUESTED_VERSION" == "$version" ]] || { echo 'Requested version differs from VERSION'; exit 1; }
+            tag="v$version"
+            # A manual release must use an existing tag pointing at this checkout.
+            git fetch origin "refs/tags/$tag:refs/tags/$tag"
+            [[ "$(git rev-list -n 1 "$tag")" == "$GITHUB_SHA" ]] || { echo 'Tag does not point at checked-out commit'; exit 1; }
+          else
+            tag="$GITHUB_REF_NAME"
+            [[ "$tag" == "v$version" ]] || { echo 'Tag differs from VERSION'; exit 1; }
+          fi
+          [[ "$ASC_TEAM_ID" =~ ^[A-Za-z0-9]+$ ]] || { echo 'Invalid team ID'; exit 1; }
+          {
+            echo "RELEASE_TAG=$tag"
+            echo "VERSION=$version"
+            echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER"
+          } >> "$GITHUB_ENV"
+      - name: Select exact Xcode 26.0.1 (17A400) and iOS 26.0 SDK
+        run: |
+          set -euo pipefail
+          pick=''
+          for candidate in /Applications/Xcode*.app/Contents/Developer; do
+            [[ -d "$candidate" ]] || continue
+            version=$(DEVELOPER_DIR="$candidate" xcodebuild -version)
+            if [[ "$version" == $'Xcode 26.0.1\nBuild version 17A400' ]]; then
+              pick="$candidate"
+              break
+            fi
+          done
+          [[ -n "$pick" ]] || { echo 'Exact Xcode 26.0.1 (17A400) unavailable'; exit 1; }
+          sdk=$(DEVELOPER_DIR="$pick" xcrun --sdk iphoneos --show-sdk-version)
+          [[ "$sdk" == 26.0 ]] || { echo "Expected iPhoneOS SDK 26.0; got $sdk"; exit 1; }
+          echo "DEVELOPER_DIR=$pick" >> "$GITHUB_ENV"
+      - name: Ensure pinned iOS 26.0 device platform exists
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          # Release archives need the matching device platform, not merely the SDK.
+          if ! xcrun simctl list runtimes | grep -Fq 'com.apple.CoreSimulator.SimRuntime.iOS-26-0'; then
+            xcodebuild -downloadPlatform iOS -architectureVariant universal
+          fi
+          xcrun simctl list runtimes | grep -F 'com.apple.CoreSimulator.SimRuntime.iOS-26-0' || {
+            echo '::error::Exact iOS 26.0 platform unavailable'; exit 1;
+          }
+          destinations=$(xcodebuild -showdestinations -project ChoreWheel.xcodeproj -scheme ChoreWheel)
+          grep -F 'Any iOS Device' <<< "$destinations" | grep -Fv 'error:' || {
+            echo '::error::Pinned Xcode has no usable iOS device destination'; exit 1;
+          }
+      - name: Require approved release icon artwork
+        run: |
+          set -euo pipefail
+          icon='AppStore/icon.png'
+          catalog='Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+          [[ -s "$icon" && -s "$catalog" ]] || { echo '::error::Approved App Store icon and asset catalog artwork required before release'; exit 1; }
+          cmp -s "$icon" "$catalog" || { echo '::error::App Store icon does not match catalog artwork'; exit 1; }
+      - name: Install ASC API key and verify app record
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc-api-key.p8"
+          chmod 600 "$RUNNER_TEMP/asc-api-key.p8"
+          jwt=$(ASC_KEY_FILE="$RUNNER_TEMP/asc-api-key.p8" ruby Tools/asc_jwt.rb)
+          app=$(curl --fail --silent --show-error --get \
+            -H "Authorization: Bearer $jwt" \
+            --data-urlencode 'filter[bundleId]=com.infinityball.chorewheel' \
+            https://api.appstoreconnect.apple.com/v1/apps | jq -r '.data[0].id // empty')
+          [[ -n "$app" ]] || { echo '::error::ASC app record missing for com.infinityball.chorewheel'; exit 1; }
+          echo "ASC_APP_ID=$app" >> "$GITHUB_ENV"
+      - name: Archive signed iPhone app
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project ChoreWheel.xcodeproj -scheme ChoreWheel \
+            -destination 'generic/platform=iOS' -configuration Release \
+            -archivePath "$RUNNER_TEMP/ChoreWheel.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/asc-api-key.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$ASC_TEAM_ID" MARKETING_VERSION="$VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+          /usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleIdentifier' \
+            "$RUNNER_TEMP/ChoreWheel.xcarchive/Info.plist" | { read -r bundle; [[ "$bundle" == com.infinityball.chorewheel ]]; }
+          /usr/libexec/PlistBuddy -c 'Print :UIDeviceFamily:0' \
+            "$RUNNER_TEMP/ChoreWheel.xcarchive/Products/Applications/ChoreWheel.app/Info.plist" | { read -r family; [[ "$family" == 1 ]]; }
+          # Xcode 26 single-size icons never write CFBundleIconName into the
+          # archived Info.plist; assert the real actool outputs instead.
+          app_dir="$RUNNER_TEMP/ChoreWheel.xcarchive/Products/Applications/ChoreWheel.app"
+          [[ -s "$app_dir/Assets.car" ]] || { echo '::error::Assets.car missing from archive'; exit 1; }
+          while IFS= read -r -d '' raster; do
+            [[ -s "$raster" ]] && { found=1; break; }
+          done < <(find "$app_dir" -maxdepth 1 -name 'AppIcon*.png' -print0)
+          [[ "${found:-}" == 1 ]] || { echo '::error::no AppIcon raster emitted'; exit 1; }
+      - name: Export signed IPA and upload through Xcode
+        run: |
+          set -euo pipefail
+          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+            '<plist version="1.0"><dict>' \
+            '<key>destination</key><string>upload</string>' \
+            '<key>method</key><string>app-store-connect</string>' \
+            '<key>uploadMethod</key><string>app-store-connect</string>' \
+            "<key>teamID</key><string>$ASC_TEAM_ID</string>" \
+            '<key>manageAppVersionAndBuildNumber</key><false/>' \
+            '<key>signingStyle</key><string>automatic</string>' \
+            '</dict></plist>' > "$RUNNER_TEMP/ExportOptions.plist"
+          mkdir -p "$RUNNER_TEMP/ipa"
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/ChoreWheel.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/ipa" -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/asc-api-key.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+      - name: Wait for TestFlight processing
+        run: |
+          set -euo pipefail
+          build_id=''
+          state=''
+          for i in {1..45}; do
+            jwt=$(ASC_KEY_FILE="$RUNNER_TEMP/asc-api-key.p8" ruby Tools/asc_jwt.rb)
+            response=$(curl --fail --silent --show-error --get \
+              -H "Authorization: Bearer $jwt" \
+              --data-urlencode "filter[app]=$ASC_APP_ID" \
+              --data-urlencode 'sort=-uploadedDate' --data-urlencode 'limit=50' \
+              https://api.appstoreconnect.apple.com/v1/builds)
+            entry=$(jq -r --arg n "$BUILD_NUMBER" \
+              '[.data[] | select(.attributes.version == $n)] | first | if . then [.id, .attributes.processingState] | @tsv else "" end' <<< "$response")
+            if [[ -n "$entry" ]]; then
+              IFS=$'\t' read -r build_id state <<< "$entry"
+            fi
+            echo "Poll $i: build ${build_id:-absent}, state ${state:-unknown}"
+            [[ -n "$build_id" && ( "$state" == VALID || "$state" == COMPLETE ) ]] && break
+            sleep 20
+          done
+          [[ -n "$build_id" && ( "$state" == VALID || "$state" == COMPLETE ) ]] || { echo '::error::TestFlight processing incomplete'; exit 1; }
+          echo "TestFlight build registered: $build_id"
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists"
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --generate-notes \
+              --title "Chore Wheel $VERSION (build $BUILD_NUMBER)"
+          fi
+      - name: Remove ASC key material
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/asc-api-key.p8"
+      - name: Retain signed IPA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chorewheel-ipa-${{ github.run_number }}
+          path: ${{ runner.temp }}/ipa/*.ipa
+          if-no-files-found: error
+          retention-days: 30
