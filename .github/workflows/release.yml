@@ -72,6 +72,21 @@ jobs:
           sdk=$(DEVELOPER_DIR="$pick" xcrun --sdk iphoneos --show-sdk-version)
           [[ "$sdk" == 26.0 ]] || { echo "Expected iPhoneOS SDK 26.0; got $sdk"; exit 1; }
           echo "DEVELOPER_DIR=$pick" >> "$GITHUB_ENV"
+      - name: Ensure pinned iOS 26.0 device platform exists
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          # Release archives need the matching device platform, not merely the SDK.
+          if ! xcrun simctl list runtimes | grep -Fq 'com.apple.CoreSimulator.SimRuntime.iOS-26-0'; then
+            xcodebuild -downloadPlatform iOS -architectureVariant universal
+          fi
+          xcrun simctl list runtimes | grep -F 'com.apple.CoreSimulator.SimRuntime.iOS-26-0' || {
+            echo '::error::Exact iOS 26.0 platform unavailable'; exit 1;
+          }
+          destinations=$(xcodebuild -showdestinations -project ChoreWheel.xcodeproj -scheme ChoreWheel)
+          grep -F 'Any iOS Device' <<< "$destinations" | grep -Fv 'error:' || {
+            echo '::error::Pinned Xcode has no usable iOS device destination'; exit 1;
+          }
       - name: Require approved release icon artwork
         run: |
           set -euo pipefail
@@ -108,6 +123,14 @@ jobs:
             "$RUNNER_TEMP/ChoreWheel.xcarchive/Info.plist" | { read -r bundle; [[ "$bundle" == com.infinityball.chorewheel ]]; }
           /usr/libexec/PlistBuddy -c 'Print :UIDeviceFamily:0' \
             "$RUNNER_TEMP/ChoreWheel.xcarchive/Products/Applications/ChoreWheel.app/Info.plist" | { read -r family; [[ "$family" == 1 ]]; }
+          # Xcode 26 single-size icons never write CFBundleIconName into the
+          # archived Info.plist; assert the real actool outputs instead.
+          app_dir="$RUNNER_TEMP/ChoreWheel.xcarchive/Products/Applications/ChoreWheel.app"
+          [[ -s "$app_dir/Assets.car" ]] || { echo '::error::Assets.car missing from archive'; exit 1; }
+          while IFS= read -r -d '' raster; do
+            [[ -s "$raster" ]] && { found=1; break; }
+          done < <(find "$app_dir" -maxdepth 1 -name 'AppIcon*.png' -print0)
+          [[ "${found:-}" == 1 ]] || { echo '::error::no AppIcon raster emitted'; exit 1; }
       - name: Export signed IPA and upload through Xcode
         run: |
           set -euo pipefail
