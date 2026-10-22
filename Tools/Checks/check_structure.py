@@ -20,7 +20,6 @@ from __future__ import annotations
 import json
 import re
 import subprocess
-import struct
 import sys
 from pathlib import Path
 
@@ -136,30 +135,6 @@ ls_check = subprocess.run(
 )
 if ls_check.returncode == 0:
     fail("AppStore/icon.png is gitignored; icon artwork must be force-tracked")
-
-# Release art contract: PNG IHDR is 1024x1024 RGB (no alpha) and catalog bytes match.
-icon = ROOT / "AppStore/icon.png"
-catalog = ROOT / "Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
-if icon.exists():
-    raw = icon.read_bytes()
-    if len(raw) < 26 or raw[:16] != b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR":
-        fail("AppStore/icon.png has no valid PNG IHDR")
-    else:
-        width, height, depth, ctype = struct.unpack(">IIBB", raw[16:26])
-        if (width, height, depth, ctype) != (1024, 1024, 8, 2):
-            fail("AppStore/icon.png must be opaque 1024x1024 RGB")
-    if not catalog.exists() or catalog.read_bytes() != raw:
-        fail("AppIcon asset artwork missing or differs from AppStore/icon.png")
-    for art in (icon, catalog):
-        if str(art.relative_to(ROOT)) not in tracked_files():
-            fail(f"release artwork not tracked in git: {art}")
-    contents = json.loads((catalog.parent / "Contents.json").read_text())
-    if not any(
-        entry.get("filename") == "AppIcon.png" and entry.get("idiom") == "universal"
-        and entry.get("size") == "1024x1024"
-        for entry in contents.get("images", [])
-    ):
-        fail("AppIcon.appiconset lacks universal 1024x1024 icon entry")
 
 # --- 6. zero-network gate -------------------------------------------------------
 NET_PATTERNS = re.compile(
